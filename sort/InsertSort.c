@@ -30,7 +30,7 @@ void InsertSort(int* pData, int len){
 
 		//将此元素插入到前面已经排序好的元素中去
 		//假设此元素比进行比较的元素更小，则需将被比较的元素后移
-		while(j>0 && target < pData[j-1]){
+		while(j>0 && pData[j-1] > target){
 			pData[j] = pData[j-1];
 			j--;
 		}
@@ -56,7 +56,7 @@ int main(){
 	printf("original : ");
 	printIntArray(data, len);
 
-	// 冒泡排序
+	// 插入排序
 	InsertSort(data, len);
 
 	// 打印最终结果
