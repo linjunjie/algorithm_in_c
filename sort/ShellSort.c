@@ -1,5 +1,5 @@
 /**
- * 希尔排序: 一种增量序列插入排序(shell sort) <Donald.Shell@1959>
+ * 希尔排序(shell sort): 一种增量序列插入排序, 又称缩小增量排序 <Donald.Shell@1959>
  * 
  * 是一种将整个序列根据增量进行分割，并在各子序列中分别进行插入排序的算法
  * 
@@ -12,19 +12,10 @@
  * 个人理解：
  * 因为直接插入排序在序列元素基本有序时是非常快的，所以希尔排序就是利用了这一点。
  * 希尔排序前期就是对整个序列中间距由大到小进行排序，直到最后序列已基本有序时再对全体元素进行一次插入排序。
- * 所以这样效率是很高的，如果直接对序列进行排序则效率会比较低。
+ * 所以这样效率是很高的，如果直接对序列进行插入排序则效率会比较低。
  */
 
-#include <stdio.h>
-
-// 计算数组长度的宏
-#define GET_ARRAY_LEN(array,len){len = (sizeof(array) / sizeof(array[0]));}
-
-// 数组打印函数
-void printIntArray(int* arrData, int len){
-	for(int i=0;i<len;i++) printf("%d,",arrData[i]);
-	printf("\n");
-}
+#include "algorithm.h"
 
 // Shell Sort 希尔排序
 void ShellSort(int* pData, int len){

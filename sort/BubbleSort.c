@@ -9,16 +9,7 @@
  * 此结果中在第四次排序之后已经排序成功，但是算法依然进行了四次没有必要的排序
  */
 
-#include <stdio.h>
-
-// 计算数组长度的宏
-#define GET_ARRAY_LEN(array,len){len = (sizeof(array) / sizeof(array[0]));}
-
-// 数组打印函数
-void printIntArray(int* arrData, int len){
-	for(int i=0;i<len;i++) printf("%d,",arrData[i]);
-	printf("\n");
-}
+#include "algorithm.h"
 
 // Bubble Sort 冒泡排序
 // 2015年11月23日 星期一 11时38分59秒 CST
