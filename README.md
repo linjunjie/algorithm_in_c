@@ -5,3 +5,9 @@
 ### BubbleSort 冒泡排序
 ### InsertSort - Direct Insert Sort 插入排序(直接插入排序)
 ### ShellSort 希尔排序
+### BinInsertSort 二分查找插入排序
+
+
+## search 查找
+
+### BinarySearch 二分查找
