@@ -1,13 +1,14 @@
 #需要包含的头文件
 INCLUS = -I..
 
-all : BubbleSort InsertSort ShellSort BinInsertSort SelectSort
+all : BubbleSort InsertSort ShellSort BinInsertSort SelectSort QuickSort
 
 BubbleSort : BubbleSort.o
 InsertSort : InsertSort.o
 ShellSort : ShellSort.o
 BinInsertSort : BinInsertSort.o
 SelectSort : SelectSort.o
+QuickSort : QuickSort.o
 
 BubbleSort.o : BubbleSort.c 
 	#In the Makefile syntax, the command must start with the [tab]
@@ -32,5 +33,8 @@ BinInsertSort.o : BinInsertSort.c
 SelectSort.o : SelectSort.c
 	gcc $(INCLUS) -c SelectSort.c
 
+QuickSort.o : QuickSort.c
+	gcc $(INCLUS) -c QuickSort.c
+
 clean : 
-	rm -rf *o BubbleSort InsertSort ShellSort BinInsertSort SelectSort
+	rm -rf *o BubbleSort InsertSort ShellSort BinInsertSort SelectSort QuickSort
