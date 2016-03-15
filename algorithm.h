@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <stdlib.h>		/* for malloc */
 
 // 计算数组长度的宏
 #define GET_ARRAY_LEN(array,len){len = (sizeof(array) / sizeof(array[0]));}

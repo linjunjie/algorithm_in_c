@@ -13,6 +13,7 @@
 
 ### SelectSort 选择排序
 ### QuickSort 快速排序
+### MergeSort 归并排序
 
 ## search 查找
 

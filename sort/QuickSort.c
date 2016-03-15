@@ -1,5 +1,11 @@
 /**
- * 快速查找
+ * 快速排序
+ *
+ * - Charles Antony Richard Hoare @1960
+ * - 东尼霍尔1962年在Computer Journal发表论文《Quicksort》以及《算法导论》的第七章
+ * - 在 ALGOL 60 语言的基础上进行了改进，设计出了ALGOL X语言, 并发明了case语句 
+ * - 1980年获得了图灵奖
+ * 
  *
  * 一种通过一次排序将整个序列分为两个部分的排序算法，其中以中值为基准，一边序列的值一定比另一边序列的值大或小
  */
@@ -7,6 +13,7 @@
 #include "algorithm.h"
 
 // 我自己实现的快速排序算法
+// 将序列中第一个数作为基准值，然后归位到中间，之后两边依次分治递归
 void MyQuickSort (int* pData, int start, int end){
 	int i,j,k;
 	int mid;	// 中指所在的元素索引
