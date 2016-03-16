@@ -49,11 +49,11 @@ int addNodeToTheEnd(link add_node){
 
 	//申请一个链空间，若申请失败返回0，然后拷贝一份儿add_node，并且将尾部指向NULL
 	tmp = (link)malloc(sizeof(struct node));
-	if(tmp == NULL) return 0;
+	if(tmp == NULL){ return 0; }	/* 申请内存空间失败则退出 */
 	memcpy(tmp, add_node, sizeof(struct node));
 	tmp -> next = NULL;
 
-	if(head == NULL){	/* 如果还是空链表，则将申请的链直接赋予head */
+	if(head == NULL){	/* 如果还是空链表，则将申请的链节点直接赋予head头结点 */
 		head = tmp;
 	}else{
 		current = head;
@@ -68,6 +68,42 @@ int addNodeToTheEnd(link add_node){
 	return 1;
 }
 
+/* 以降序添加节点 */
+int addNodeAscend(link add_node){
+	link tmp;		/* 用于保存被插入的临时节点 */
+	link current;	/* 循环遍历时的当前节点 */
+	link prev;		/* 前一个链节点 */
+
+	tmp = (link)malloc(sizeof(struct node));
+	if(tmp == NULL){ return 0; }	/* 申请内存空间失败则退出 */
+	memcpy(tmp, add_node, sizeof(struct node));
+	tmp -> next = NULL;
+
+	if(head == NULL){		/* 如果还是空链表，则将申请的链节点直接赋予head头结点 */
+		head = tmp;
+	}else{
+		prev = (link)malloc(sizeof(struct node));
+		if(prev == NULL){ return 0; }	/* 申请内存空间失败则退出 */
+		prev -> next = current = head;
+		for(;;prev = current, current = current -> next){	/* 循环遍历链表，每次都保留上一个节点，并遍历到下一个节点 */
+			if(current == NULL){		/* 如果已经遍历到链表的最后一个节点时仍没有找到比自己更大的节点的话，则将链节点插入到上一个节点所指向的下一个节点（也就是最后） */
+				prev -> next = tmp;
+				break;
+			}else if(tmp -> num < current -> num){		/* 如果找到了比自己大的节点位置 */
+				if(current == head){		
+					head = tmp;			/* 若此时是头结点，则直接将带插入节点插入到头结点 */
+				}else{
+					prev -> next = tmp;		/* 否则插入上一个节点指向的下一个节点 */
+				}
+				tmp -> next = current;	/* 然后插入节点的下一个指向都是当前节点位置 */
+				break;
+			}
+		}
+	}
+
+	return 1;
+}
+
 int deleteNode(link del_node){
 	link current;	/* 保存当前所在的链表 */
 	link prev;		/* 保存上一个链 */
@@ -79,7 +115,7 @@ int deleteNode(link del_node){
 
 	// 开辟一块儿新内存存放prev链节点，也就是所谓的“上一个链节点”，默认设置为指向head头结点
 	prev = (link) malloc (sizeof(struct node));
-
+	if(prev == NULL){ return 0; }	/* 申请内存空间失败则退出 */
 	prev -> next = current = head;
 	for(;;prev = current, current = current -> next){	/* 将当前的链保存到prev，并遍历到下一个链 */
 		if(current == NULL){
@@ -110,7 +146,8 @@ int main(int argc, char *argv[]){
 	struct node add_node;
 	for(int i = 0; i < len; i++){
 		add_node.num = data[i];
-		addNodeToTheEnd(&add_node);
+		// addNodeToTheEnd(&add_node);		/* 插入到链表尾部 */
+		addNodeAscend(&add_node);		/* 以降序插入链表 */
 	}
 	print(head);
 
