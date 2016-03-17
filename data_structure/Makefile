@@ -1,14 +1,18 @@
 #需要包含的头文件
 INCLUS = -I..
 
-all : LinkedList
+all : SingleLinkedList DoubleLinkedList
 
-LinkedList : LinkedList.o
+SingleLinkedList : SingleLinkedList.o
+DoubleLinkedList : DoubleLinkedList.o
 
-LinkedList.o : LinkedList.c 
+SingleLinkedList.o : SingleLinkedList.c
 	#In the Makefile syntax, the command must start with the [tab]
 	#otherwise you will get an error.
-	gcc $(INCLUS) -c LinkedList.c 
+	gcc $(INCLUS) -c SingleLinkedList.c 
+
+DoubleLinkedList.o : DoubleLinkedList.c
+	gcc $(INCLUS) -c DoubleLinkedList.c 
 
 clean : 
-	rm -rf *o LinkedList
+	rm -rf *o SingleLinkedList DoubleLinkedList

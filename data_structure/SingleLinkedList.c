@@ -1,5 +1,5 @@
 /**
- * 单链表
+ * 单向链表 - Singly-Linked List
  *
  * 每一个节点都包含一个或多个存储数据的data域和一个指向子链节点的指针域
  * 多个前后相连的链节点便组成了链表 
@@ -44,7 +44,7 @@ void print(link head){
 
 /* 在链表尾部添加一个节点 */
 int addNodeToTheEnd(link add_node){
-	link tmp;		//临时链，用于存储申请到的链
+	link tmp;		//临时链，用于存储要添加的链，基本上就是要添加的节点add_node的拷贝
 	link current;	//当前链，用于遍历链表时存储当前遍历元素
 
 	//申请一个链空间，若申请失败返回0，然后拷贝一份儿add_node，并且将尾部指向NULL
@@ -58,7 +58,7 @@ int addNodeToTheEnd(link add_node){
 	}else{
 		current = head;
 		for(;;current = current -> next){
-			if(current -> next == NULL){	/* 循环到的node指向是NULL的话，则已经到达尾部 */
+			if(current -> next == NULL){	/* 循环到的node指向的下一个节点如果是NULL的话，则已经到达尾部 */
 				current -> next = tmp;		/* 将申请的链安装在尾部 */
 				break;
 			}
@@ -104,10 +104,14 @@ int addNodeAscend(link add_node){
 	return 1;
 }
 
+/* 对节点的释放，如果这里包含有其他指针，需要统一在这里一起释放 */
+void freeNode(link free_node){
+	free(free_node);
+}
+
 int deleteNode(link del_node){
 	link current;	/* 保存当前所在的链表 */
 	link prev;		/* 保存上一个链 */
-	link tmp;
 
 	if(head == NULL){
 		return 0;
@@ -126,7 +130,7 @@ int deleteNode(link del_node){
 			}else{
 				prev -> next = current -> next;		/* 如果要删除的节点不是头结点，则将父节点的子节点指向被删除节点的子节点 */
 			}
-			free(current);		/* 经过上面处理了链节点的指向之后，现在可以释放掉要删除链节点的内存了 */
+			freeNode(current);		/* 经过上面处理了链节点的指向之后，current现在已经完全被孤立掉了，现在可以释放掉要删除链节点的内存了 */
 			printf("delete node: %d success!\n\n", current -> num);
 
 			return 1;
@@ -146,8 +150,8 @@ int main(int argc, char *argv[]){
 	struct node add_node;
 	for(int i = 0; i < len; i++){
 		add_node.num = data[i];
-		// addNodeToTheEnd(&add_node);		/* 插入到链表尾部 */
-		addNodeAscend(&add_node);		/* 以降序插入链表 */
+		addNodeToTheEnd(&add_node);		/* 插入到链表尾部 */
+		// addNodeAscend(&add_node);		/* 以降序插入链表 */
 	}
 	print(head);
 
