@@ -21,4 +21,12 @@
 
 ## data_structure 数据结构
 
-### 单链表
+### SingleLinkedList 单向链表
+### DoubleLinkedList 双向链表
+### SingleCircularLinkedList 单向循环链表
+### DoubleCircularLinkedList 双向循环链表
+
+
+## 使用方法:
+
+> 进入各个目录执行make即可编译文件，之后运行文件即可

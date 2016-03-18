@@ -1,8 +1,7 @@
 /**
- * 单向链表 - Singly-Linked List
+ * 单向循环链表 - Singly Circular Linked List
  *
- * 每一个节点都包含一个或多个存储数据的data域和一个指向子链节点的指针域
- * 多个前后相连的链节点便组成了链表 
+ * 最后一个节点的尾节点指向头结点
  *
  */
 
@@ -18,8 +17,8 @@ struct node
 //定义一个链表节点指针类型link
 typedef struct node * link;
 
-//定义一个头类型
-link head;
+//定义一个头类型，并增加了一个尾部链节点
+link head,tail;
 
 //节点个数
 int node_count;
@@ -27,6 +26,7 @@ int node_count;
 /* 初始化一个空链表 */
 void initList(){
 	head = NULL;
+	// head -> next = head;
 	node_count = 0;
 }
 
@@ -35,10 +35,10 @@ void print(link head){
 	link node;
 	node = head;
 	printf("print the whole linkedlist:\n");
-	while(node != NULL){
+	do{
 		printf("%d,", node->num);
 		node = node -> next;
-	}
+	}while(node != head);
 	printf("\n\n");
 }
 
@@ -55,10 +55,12 @@ int addNodeToTheEnd(link add_node){
 
 	if(head == NULL){	/* 如果还是空链表，则将申请的链节点直接赋予head头结点 */
 		head = tmp;
+		head -> next = head;
 	}else{
 		current = head;
 		for(;;current = current -> next){
-			if(current -> next == NULL){	/* 循环到的node指向的下一个节点如果是NULL的话，则已经到达尾部 */
+			if(current -> next == head){	/* 循环到的node指向的下一个节点如果是head的话，则已经到达尾部 */
+				tmp -> next = head;
 				current -> next = tmp;		/* 将申请的链安装在尾部 */
 				break;
 			}
@@ -80,22 +82,32 @@ int addNodeAscend(link add_node){
 	tmp -> next = NULL;
 
 	if(head == NULL){		/* 如果还是空链表，则将申请的链节点直接赋予head头结点 */
-		head = tmp;
+		tail = head = tmp;
 	}else{
-		prev = (link)malloc(sizeof(struct node));
-		if(prev == NULL){ return 0; }	/* 申请内存空间失败则退出 */
-		prev -> next = current = head;
+		prev = current = head;
 		for(;;prev = current, current = current -> next){	/* 循环遍历链表，每次都保留上一个节点，并遍历到下一个节点 */
-			if(current == NULL){		/* 如果已经遍历到链表的最后一个节点时仍没有找到比自己更大的节点的话，则将链节点插入到上一个节点所指向的下一个节点（也就是最后） */
-				prev -> next = tmp;
-				break;
-			}else if(tmp -> num < current -> num){		/* 如果找到了比自己大的节点位置 */
-				if(current == head){		
-					head = tmp;			/* 若此时是头结点，则直接将待插入节点插入到头结点 */
+			if(current == tail){		/* 如果遍历到链表最后一个节点都没有找到合适的位置 */
+				if(tmp -> num < current -> num){	/* 这个时候需要判断最后一个节点和插入节点的大小关系，如果小于 */
+					tmp -> next = current;			/* 插入节点必然指向当前节点 */
+					prev -> next = tmp;
+					if(current == head){			/* 如果当前节点是头结点(当前节点也有可能是头结点) */
+						head = tmp;					/* 则插入节点变为头结点 */
+					}
 				}else{
-					prev -> next = tmp;		/* 否则插入上一个节点指向的下一个节点 */
+					tmp -> next = head;		/* 此时插入节点必然指向头结点 */
+					current -> next = tmp;	/* 当前节点指向插入节点 */
+					tail = tmp;				/* 插入节点作为尾部节点 */
 				}
-				tmp -> next = current;	/* 然后插入节点的下一个指向都是当前节点位置 */
+				break;
+			}else if(tmp -> num < current -> num){		/* 如果找到了自己的位置 */
+				if(current == head){					/* 如果这个位置是头结点 */
+					head = tmp;							/* 则插入节点此时作为头结点 */
+					tmp -> next = current;				/* 插入节点的尾部指向当前节点 */
+					tail -> next = head;				/* 链表的尾部节点的指向也应该变为插入节点 */
+				}else{									/* 如果这个位置不是头结点 */
+					prev -> next = tmp;					/* 则必然存在上一个节点，上一个节点必然指向插入节点 */
+					tmp -> next = current;				/* 插入节点必然指向当前节点 */
+				}
 				break;
 			}
 		}
@@ -150,8 +162,8 @@ int main(int argc, char *argv[]){
 	struct node add_node;
 	for(int i = 0; i < len; i++){
 		add_node.num = data[i];
-		addNodeToTheEnd(&add_node);		/* 插入到链表尾部 */
-		// addNodeAscend(&add_node);		/* 以降序插入链表 */
+		// addNodeToTheEnd(&add_node);		/* 插入到链表尾部 */
+		addNodeAscend(&add_node);		/* 以降序插入链表 */
 	}
 	print(head);
 

@@ -1,9 +1,7 @@
 /**
- * 双向链表 - Doubly-Linked List
+ * 双向循环链表 - Doubly Circular Linked List
  *
- * 每一个节点都包含一个或多个存储数据的data域和两个分别指向父节点（或称为头结点）和子节点（或称为尾节点）的指针域
- * 多个前后相连的双向链节点便组成了双向链表 
- *
+ * 头尾相连的双向链表
  */
 
 #include "algorithm.h"
@@ -33,10 +31,10 @@ void print(link head){
 	link node;
 	node = head;
 	printf("print the whole linkedlist:\n");
-	while(node != NULL){
+	do{
 		printf("%d,", node -> num);
 		node = node -> next;
-	}
+	}while(node != head);
 	printf("\n\n");
 }
 
@@ -55,12 +53,15 @@ int addNodeToTheEnd(link add_node){
 
 	if(head == NULL){
 		head = tmp;
+		head -> next = head -> prev = tmp;
 	}else{
 		current = head;
 		for(;;current = current -> next){
-			if(current -> next == NULL){
-				tmp -> prev = current;
-				current -> next = tmp;
+			if(current -> next == head){	/* 如果已经到了最后一个元素 */
+				current -> next = tmp;		/* 当前节点的下一个节点应该是插入节点 */
+				tmp -> prev = current;		/* 插入节点的上一级节点应该是当前节点 */
+				tmp -> next = head;			/* 插入节点的下一个节点应该是头结点 */
+				head -> prev = tmp;
 				break;
 			}
 		}
@@ -71,7 +72,7 @@ int addNodeToTheEnd(link add_node){
 
 /* 按照从小到大的顺序插入节点 */
 int addNodeAscend(link add_node){
-	link prev,current,next;
+	link prev,current,next,tail;
 	link tmp;
 
 	tmp = (link) malloc (sizeof(struct node));
@@ -83,19 +84,35 @@ int addNodeAscend(link add_node){
 
 	if(head == NULL){	/* 如果是空链接 */
 		head = tmp;		/* 直接将节点加入头结点 */
+		head -> next = head -> prev = head;
 	}else{
 		current = head;	/* 从头结点出发寻找 */
 		prev = current -> prev;
 		for(;;prev = current, current = current -> next){
-			if(current == NULL){			/* 如果是最后一个节点，也就说明到了最后一个节点扔未找到合适的位置，则插入节点应插在链表尾部 (注意此时的current节点绝对不可能是head头结点) */
-				tmp -> prev = prev;			/* 插入节点的头结点应该是上一个节点 */
-				prev -> next = tmp;			/* 上一个节点的尾节点应该是插入节点 */
+			if(current -> next == head){			/* 如果是最后一个节点 */
+				if(tmp -> num < current -> num){	/* 判断最后一个节点与插入节点的大小关系 */
+					tmp -> next = current;
+					current -> prev = tmp;
+					prev -> next = tmp;
+					tmp -> prev = prev;
+					if(current == head){			/* 如果此时既是末节点又是头结点，则此时的头结点就应该变为插入节点 */
+						head = tmp;					/* 头结点变为插入节点 */
+					}
+				}else{
+					tmp -> prev = current;
+					current -> next = tmp;
+					tmp -> next = head;
+					head -> prev = tmp;
+				}
 				break;
 			}else if(tmp -> num < current -> num){			/* 如果找到了自己应该插入的位置 */
 				if(current == head){		/* 如果此时是头结点 */
+					tail = head -> prev;	/* 首先拿到尾节点 */
 					current -> prev = tmp;	/* 则此时当前节点不再作为头结点，并且当前节点的头结点变为了插入节点 */
 					tmp -> next = current;	/* 插入节点的尾节点应该是当前节点 */
 					head = tmp;				/* 将插入节点作为头结点 */
+					head -> prev = tail;
+					tail -> next = head;
 				}else{						/* 如果不是头结点 */
 					tmp -> next = current;	/* 则插入节点的尾节点为当前节点 */
 					tmp -> prev = prev;		/* 插入节点的头结点是当前节点的头结点 */
