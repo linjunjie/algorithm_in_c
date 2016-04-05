@@ -1,3 +1,7 @@
+/* dll.c 
+ * double linked list
+ */
+
 #include "dll.h"
 
 /* 初始化一个空链表 */

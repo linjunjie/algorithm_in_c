@@ -104,6 +104,7 @@ int print_stack(){
 	return 1;
 }
 
+/* 查看指定栈位置的栈元素 */
 int view_element(stack_struct * stack, int element_num){
 	if(stack -> top == -1){
 		return -1;
@@ -113,7 +114,6 @@ int view_element(stack_struct * stack, int element_num){
 		return -1;
 	}
 
-	// return ( & ( (stack -> base)[stack -> top - element_num] ) );
 	return getNode(element_num);
 }
 
@@ -163,7 +163,7 @@ int main(int argc, char * argv[]){
 	// return 1;
 
 	/* 执行弹出操作，并打印被弹出的栈元素 */
-	printf("%s\n", "print the whole stack element:");
+	printf("%s\n", "print the whole stack elements:");
 	while(pop_stack(stack, element) != 0){
 		printf("%d\n", element -> num);
 	}

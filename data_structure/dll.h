@@ -1,15 +1,11 @@
 /**
- * 双向链表 - Doubly-Linked List
- *
- * 每一个节点都包含一个或多个存储数据的data域和两个分别指向父节点（或称为头结点）和子节点（或称为尾节点）的指针域
- * 多个前后相连的双向链节点便组成了双向链表 
- *
+ * 用来实现栈结构的双向链表
+ * dll.h
+ * double linked list
  */
-
 
 #ifndef _DLL_H_
 #define _DLL_H_ 1
-
 
 #include "algorithm.h"
 
