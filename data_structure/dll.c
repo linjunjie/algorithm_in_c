@@ -1,26 +1,4 @@
-/**
- * 双向链表 - Doubly-Linked List
- *
- * 每一个节点都包含一个或多个存储数据的data域和两个分别指向父节点（或称为头结点）和子节点（或称为尾节点）的指针域
- * 多个前后相连的双向链节点便组成了双向链表 
- *
- */
-
-#include "algorithm.h"
-
-struct node{
-	int num;
-	struct node * prev;		/* 指向上一个节点 */
-	struct node * next;		/* 指向下一个节点 */
-};
-
-typedef struct node * link;
-
-//定义一个头类型
-link head;
-
-//节点个数
-int node_count;
+#include "dll.h"
 
 /* 初始化一个空链表 */
 void initList(){
@@ -170,21 +148,27 @@ int deleteNode(link del_node){
 	}
 }
 
-/* 从链表开始处删除一个节点 */
+/* 删除一个头结点, 并返回删除的头结点指针 */
 int deleteNodeFromHead(){
+	int del_node;
 	link current;
 	link prev;
 	link next;
 
 	if(head == NULL){
-		return 0;
+		return -1;
 	}
 
-	current = head -> next;
-	current -> prev = NULL;
-	head = current;
+	current = head;
+	next = head -> next;
+	del_node = current -> num;
+	if(next != NULL){
+		next -> prev = NULL;
+		head = next;
+	}
+	freeNode(current);
 
-	return 1;
+	return del_node;
 }
 
 /* 根据位置获取链表中的特定元素(第一个元素的位置为1) */
@@ -201,33 +185,4 @@ int getNode(int node_index){
 			return current -> num;
 		}
 	}
-}
-
-int main(int argc, char *argv[]){
-	int data[] = {8,5,3,1,10,2,7,9,4,6};
-	int len;
-	GET_ARRAY_LEN(data, len);
-
-	initList();
-	struct node add_node;
-	for(int i = 0; i < len; i++){
-		add_node.num = data[i];
-		addNodeToHead(&add_node);
-		// addNodeToTail(&add_node);		/* 插入到链表尾部 */
-		// addNodeAscend(&add_node);
-	}
-	print(head);
-
-	int num = getNode(3);
-	printf("%d", num);
-	return 1;
-
-	//删除一个链节点
-	add_node.num = 5;
-	deleteNode(&add_node);
-
-	//删除一个头节点
-	// deleteNodeFromHead();
-
-	print(head);
 }

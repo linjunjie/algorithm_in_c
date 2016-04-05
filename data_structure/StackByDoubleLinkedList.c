@@ -1,10 +1,4 @@
-/**
- *	栈结构 - 通过数组结构实现
- *
- *	LIFO last in, first out
- */
-
-#include "algorithm.h"
+#include "dll.c"
 
 struct _stack{
 
@@ -33,6 +27,7 @@ struct _stack_element
 };
 
 typedef struct _stack_element stack_element_struct;
+
 
 stack_struct * create_stack(int size){
 	stack_struct * stack;
@@ -75,8 +70,10 @@ int push_stack(stack_struct * stack, stack_element_struct * element){
 		return 0;
 	}
 
-	/* 将压入栈的元素的内存拷贝到对应的栈数组中 */
-	memmove( & (( stack -> base )[ stack -> top]), element, sizeof(stack_element_struct));
+	/* 降压入栈中的元素添加到链表的开头 */
+	struct node op_node;
+	op_node.num = element -> num;
+	addNodeToHead(&op_node);
 
 	/* 栈顶位置 +1 */
 	stack -> top += 1;
@@ -91,8 +88,8 @@ int pop_stack(stack_struct * stack, stack_element_struct * element){
 		return 0;
 	}
 
-	/* 将栈顶元素的内存拷贝到弹出的栈元素中 */
-	memmove(element, & ( (stack -> base)[stack -> top]), sizeof(stack_element_struct));
+	/* 从链表的头部位置开始删除元素 */
+	element -> num = deleteNodeFromHead();
 
 	/* 栈顶位置 -1 */
 	stack -> top -= 1;
@@ -100,16 +97,24 @@ int pop_stack(stack_struct * stack, stack_element_struct * element){
 	return 1;
 }
 
-stack_element_struct * view_element(stack_struct * stack, int element_num){
+/* 打印整个栈: head -> tail */
+int print_stack(){
+	printf("%s\n", "print the whole stack based on the linkedlist:");
+	print(head);
+	return 1;
+}
+
+int view_element(stack_struct * stack, int element_num){
 	if(stack -> top == -1){
-		return NULL;
+		return -1;
 	}
 
 	if(stack -> top - element_num < 0){
-		return NULL;
+		return -1;
 	}
 
-	return ( & ( (stack -> base)[stack -> top - element_num] ) );
+	// return ( & ( (stack -> base)[stack -> top - element_num] ) );
+	return getNode(element_num);
 }
 
 int main(int argc, char * argv[]){
@@ -141,13 +146,24 @@ int main(int argc, char * argv[]){
 		push_stack(stack, element);
 	}
 
+	//打印整个栈内元素
+	// print_stack();
+	// return 1;
 
 	/* 打印栈内某一个元素 */
-	// element = view_element(stack, 2);
-	// printf("%d\n", element -> num);
+	// int num = view_element(stack, 4);
+	// printf("%d\n", num);
+	// return 1;
 
+	// 弹出一个栈元素
+	// print_stack();
+	// pop_stack(stack, element);
+	// printf("%d\n", element -> num);
+	// print_stack();	//弹出一个之后再打印一下栈目前的情况
+	// return 1;
 
 	/* 执行弹出操作，并打印被弹出的栈元素 */
+	printf("%s\n", "print the whole stack element:");
 	while(pop_stack(stack, element) != 0){
 		printf("%d\n", element -> num);
 	}

@@ -2,6 +2,7 @@
 
 ## TODO
 
+### 排序
 - [x] 冒泡排序
 - [x] 直接插入排序
 - [x] 希尔排序
@@ -11,16 +12,20 @@
 - [x] 归并排序
 - [ ] 堆排序
 
+### 查找
 - [x] 二分查找
 
+### 数据结构
 - [x] 单向链表
 - [x] 双向链表
 - [x] 单向循环链表
 - [x] 双向循环链表
 - [x] 栈 - 通过数组实现
-- [ ] 栈 - 通过链表实现
+- [x] 栈 - 通过双向链表实现
+- [ ] 队列
 - [ ] 堆
 - [ ] 树
+
 
 ## 使用方法:
 
@@ -52,5 +57,5 @@
 ### DoubleLinkedList 双向链表
 ### SingleCircularLinkedList 单向循环链表
 ### DoubleCircularLinkedList 双向循环链表
-
-
+### StackByArr 通过数组实现的栈
+### StackByDoubleLinkedList 通过双向链表实现的栈
