@@ -1,44 +1,49 @@
 #需要包含的头文件
-INCLUS = -I..
+INCLUS = -I../include
 
-all : BubbleSort InsertSort ShellSort BinInsertSort SelectSort QuickSort MergeSort
+#源文件
+SRC_DIR = ../src
 
-BubbleSort : BubbleSort.o
-InsertSort : InsertSort.o
-ShellSort : ShellSort.o
-BinInsertSort : BinInsertSort.o
-SelectSort : SelectSort.o
-QuickSort : QuickSort.o
-MergeSort : MergeSort.o
+#所有编译选项
+COMMON_FLAGS = -Wall $(INCLUS) -L../lib -lalgorithm
 
-BubbleSort.o : BubbleSort.c 
-	#In the Makefile syntax, the command must start with the [tab]
-	#otherwise you will get an error.
-	gcc $(INCLUS) -c BubbleSort.c 
+#需要的静态文件
+LIB_OBJ = libalgorithm.a
 
-InsertSort.o : InsertSort.c
-	#In the Makefile syntax, the command must start with the [tab]
-	#otherwise you will get an error.
-	gcc $(INCLUS) -c InsertSort.c
+all : $(LIB_OBJ) \
+		BubbleSort InsertSort ShellSort BinInsertSort SelectSort QuickSort MergeSort
 
-ShellSort.o : ShellSort.c
-	#In the Makefile syntax, the command must start with the [tab]
-	#otherwise you will get an error.
-	gcc $(INCLUS) -c ShellSort.c
+#编译静态链接库
+libalgorithm.a : algorithm.o
+	#生成静态库libalgorithm.a
+	ar rs libalgorithm.a algorithm.o
+	#将生成的静态库文件转移到../lib目录下
+	mv libalgorithm.a ../lib
 
-BinInsertSort.o : BinInsertSort.c
-	#In the Makefile syntax, the command must start with the [tab]
-	#otherwise you will get an error.
-	gcc $(INCLUS) -c BinInsertSort.c
+algorithm.o : $(SRC_DIR)/algorithm.c
+	gcc $(COMMON_FLAGS) -c $(SRC_DIR)/algorithm.c 
 
-SelectSort.o : SelectSort.c
-	gcc $(INCLUS) -c SelectSort.c
 
-QuickSort.o : QuickSort.c
-	gcc $(INCLUS) -c QuickSort.c
+BubbleSort : BubbleSort.c 
+	gcc -o BubbleSort $(COMMON_FLAGS) BubbleSort.c 
 
-MergeSort.o : MergeSort.c
-	gcc $(INCLUS) -c MergeSort.c
+InsertSort : InsertSort.c
+	gcc -o InsertSort $(COMMON_FLAGS) InsertSort.c
+
+ShellSort : ShellSort.c
+	gcc -o ShellSort $(COMMON_FLAGS) ShellSort.c
+
+BinInsertSort : BinInsertSort.c
+	gcc -o BinInsertSort $(COMMON_FLAGS) BinInsertSort.c
+
+SelectSort : SelectSort.c
+	gcc -o SelectSort $(COMMON_FLAGS) SelectSort.c
+
+QuickSort : QuickSort.c
+	gcc -o QuickSort $(COMMON_FLAGS) QuickSort.c
+
+MergeSort : MergeSort.c
+	gcc -o MergeSort $(COMMON_FLAGS) MergeSort.c
 
 clean : 
 	rm -rf *o BubbleSort InsertSort ShellSort BinInsertSort SelectSort QuickSort MergeSort

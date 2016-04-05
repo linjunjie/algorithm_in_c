@@ -78,7 +78,7 @@ int addNodeToTail(link add_node){
 
 /* 按照从小到大的顺序插入节点 */
 int addNodeAscend(link add_node){
-	link prev,current,next;
+	link prev,current;
 	link tmp;
 
 	tmp = (link) malloc (sizeof(struct node));
@@ -156,7 +156,6 @@ int deleteNode(link del_node){
 int deleteNodeFromHead(){
 	int del_node;
 	link current;
-	link prev;
 	link next;
 
 	if(head == NULL){

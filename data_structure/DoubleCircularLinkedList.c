@@ -72,7 +72,7 @@ int addNodeToTheEnd(link add_node){
 
 /* 按照从小到大的顺序插入节点 */
 int addNodeAscend(link add_node){
-	link prev,current,next,tail;
+	link prev,current,tail;
 	link tmp;
 
 	tmp = (link) malloc (sizeof(struct node));

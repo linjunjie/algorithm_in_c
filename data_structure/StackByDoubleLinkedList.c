@@ -1,5 +1,4 @@
-#include "dll.c"
-
+#include "dll.h"
 struct _stack{
 
 	/* 栈内容纳的元素 */

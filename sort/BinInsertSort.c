@@ -13,9 +13,23 @@
 
 #include "algorithm.h"
 
+// 二分搜索查找到需要插入的位置
+int BinSearch (int* pData, int needle, int start, int end) {
+	int len = end - start + 1;
+	int half = len / 2;
+	int current = start + half; //当前索引
+	if(needle < pData[current]){
+		if(current == start) return current;
+		return BinSearch(pData, needle, start, current - 1);
+	}else{
+		if(current == end) return current + 1;
+		return BinSearch(pData, needle, current + 1, end);
+	}
+}
+
 // Binary Insert Sort 二分查找插入排序
 void BinInsertSort(int* pData, int len){
-	int i,j,k;
+	int i,k;
 	int tmp;
 	int index;
 
@@ -37,20 +51,6 @@ void BinInsertSort(int* pData, int len){
 		// 打印排序过程
 		printf("process %d: ",i);
 		printIntArray(pData, len);
-	}
-}
-
-// 二分搜索查找到需要插入的位置
-int BinSearch (int* pData, int needle, int start, int end) {
-	int len = end - start + 1;
-	int half = len / 2;
-	int current = start + half; //当前索引
-	if(needle < pData[current]){
-		if(current == start) return current;
-		return BinSearch(pData, needle, start, current - 1);
-	}else{
-		if(current == end) return current + 1;
-		return BinSearch(pData, needle, current + 1, end);
 	}
 }
 
