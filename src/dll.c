@@ -36,9 +36,12 @@ int addNodeToHead(link add_node){
 	tmp -> next = NULL;
 
 	if(head == NULL){
-		head = tmp;
+		head = tail = tmp;
 	}else{
 		current = head;
+		if(head == tail){
+			tail = current;
+		}
 		tmp -> next = current;
 		current -> prev = tmp;
 		head = tmp;
@@ -61,13 +64,14 @@ int addNodeToTail(link add_node){
 	tmp -> next = NULL;
 
 	if(head == NULL){
-		head = tmp;
+		tail = head = tmp;
 	}else{
 		current = head;
 		for(;;current = current -> next){
 			if(current -> next == NULL){
 				tmp -> prev = current;
 				current -> next = tmp;
+				tail = tmp;
 				break;
 			}
 		}
@@ -168,6 +172,29 @@ int deleteNodeFromHead(){
 	if(next != NULL){
 		next -> prev = NULL;
 		head = next;
+	}
+	freeNode(current);
+
+	return del_node;
+}
+
+//删除链表尾部元素
+//for 队列
+int deleteNodeFromTail(){
+	int del_node;
+	link current;
+	link prev;
+
+	if(tail == NULL){
+		return -1;
+	}
+
+	current = tail;
+	prev = tail -> prev;
+	del_node = current -> num;
+	if(prev != NULL){
+		prev -> next = NULL;
+		tail = prev;
 	}
 	freeNode(current);
 

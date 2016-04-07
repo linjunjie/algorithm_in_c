@@ -1,5 +1,6 @@
 /**
- * 用来实现栈结构的双向链表
+ * 带头尾指针的双向链表
+ * 目前是用来实现栈和队列
  * dll.h
  * double linked list
  */
@@ -17,8 +18,8 @@ struct node{
 
 typedef struct node * link;
 
-//定义一个头类型
-link head;
+//头尾指针
+link head, tail;
 
 //节点个数
 int node_count;
@@ -31,6 +32,7 @@ int addNodeAscend(link add_node);
 void freeNode(link free_node);
 int deleteNode(link del_node);
 int deleteNodeFromHead();
+int deleteNodeFromTail();
 int getNode(int node_index);
 
 #endif

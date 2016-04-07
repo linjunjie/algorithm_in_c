@@ -4,6 +4,7 @@ CC = cc
 #DIR = /usr/local/github/algorithm_in_c
 
 SRC_DIR = ../src
+LIB_DIR = ../lib
 
 #需要包含的头文件
 INCLUDES = -I../include
@@ -33,7 +34,8 @@ all : $(LIB_OBJ) \
 	SingleCircularLinkedList \
 	DoubleCircularLinkedList \
 	StackByArr \
-	StackByDoubleLinkedList
+	StackByDoubleLinkedList \
+	Queue
 
 #编译静态链接库
 libdll.a : dll.o
@@ -70,14 +72,19 @@ StackByArr.o : StackByArr.c
 StackByDoubleLinkedList : StackByDoubleLinkedList.c
 	$(CC) $(COMMON_FLAGS) $(LIBS) -ldll StackByDoubleLinkedList.c -o StackByDoubleLinkedList
 
+#队列 - 通过双向链表库libdll实现
+Queue : Queue.c
+	$(CC) $(COMMON_FLAGS) $(LIBS) -ldll Queue.c -o Queue
+
 # .PHONY是为了指定后面的元素，例如这里的clean并不是一个真正的文件，只是一个假想工作目标
 .PHONY : clean
 
 clean : 
-	rm -rf *.a *.o \
+	rm -rf $(LIB_DIR)/*.a *.o \
 			SingleLinkedList \
 			DoubleLinkedList \
 			SingleCircularLinkedList \
 			DoubleCircularLinkedList \
 			StackByArr \
-			StackByDoubleLinkedList
+			StackByDoubleLinkedList \
+			Queue

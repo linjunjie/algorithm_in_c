@@ -127,7 +127,7 @@ int main(int argc, char * argv[]){
 	/* 构建一个栈,长度为上面的数组长度 */
 	stack = create_stack (len);
 	if(stack == NULL){
-		return -1;
+		return 0;
 	}
 
 	/* 声明一个栈元素 */
@@ -136,7 +136,7 @@ int main(int argc, char * argv[]){
 	/* 为栈元素开辟内存空间 */
 	element = (stack_element_struct *) malloc (sizeof( stack_element_struct ));
 	if(element == NULL){
-		return -1;
+		return 0;
 	}
 
 	/* 将上面的数组元素全部压入栈 */
