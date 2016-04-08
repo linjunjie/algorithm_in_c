@@ -11,8 +11,8 @@ void initList(){
 }
 
 /* 打印以head作为头开始的链表 */
-void printdll(link head, dll_print_function self_defined_print){
-	link node = head;
+void printdll(pSnode head, dll_print_function self_defined_print){
+	pSnode node = head;
 	printf("print the whole linkedlist:\n");
 	while(node != NULL){
 		self_defined_print(node -> data);
@@ -22,16 +22,16 @@ void printdll(link head, dll_print_function self_defined_print){
 }
 
 /* 将一个节点加入到双向链表的开始 */
-int addNodeToHead(link add_node, dll_print_function self_defined_print){
-	link tmp;
-	link current;
+int addNodeToHead(pSnode add_node, dll_print_function self_defined_print){
+	pSnode tmp;
+	pSnode current;
 
-	tmp = (link) malloc (sizeof(struct node));
+	tmp = (pSnode) malloc (sizeof(Snode));
 	if(tmp == NULL){
 		return 0;
 	}
 
-	memcpy(tmp, add_node, sizeof(struct node));
+	memcpy(tmp, add_node, sizeof(Snode));
 	tmp -> prev = tmp -> next = NULL;
 
 	if(head == NULL){
@@ -54,16 +54,16 @@ int addNodeToHead(link add_node, dll_print_function self_defined_print){
 }
 
 /* 将一个节点加入到双向链表的末尾 */
-int addNodeToTail(link add_node){
-	link tmp;
-	link current;
+int addNodeToTail(pSnode add_node){
+	pSnode tmp;
+	pSnode current;
 
-	tmp = (link) malloc (sizeof(struct node));
+	tmp = (pSnode) malloc (sizeof(Snode));
 	if(tmp == NULL){
 		return 0;
 	}
 
-	memcpy(tmp, add_node, sizeof(struct node));
+	memcpy(tmp, add_node, sizeof(Snode));
 	tmp -> prev = tmp -> next = NULL;
 
 	if(head == NULL){
@@ -84,15 +84,15 @@ int addNodeToTail(link add_node){
 }
 
 /* 按照从小到大的顺序插入节点 */
-int addNodeAscend(link add_node, dll_compare_function self_defined_compare){
-	link prev,current;
-	link tmp;
+int addNodeAscend(pSnode add_node, dll_compare_function self_defined_compare){
+	pSnode prev,current;
+	pSnode tmp;
 
-	tmp = (link) malloc (sizeof(struct node));
+	tmp = (pSnode) malloc (sizeof(Snode));
 	if(tmp == NULL){
 		return 0;
 	}
-	memcpy(tmp, add_node, sizeof(struct node));
+	memcpy(tmp, add_node, sizeof(Snode));
 	tmp -> prev = tmp -> next = NULL;
 
 	if(head == NULL){	/* 如果是空链接 */
@@ -125,16 +125,16 @@ int addNodeAscend(link add_node, dll_compare_function self_defined_compare){
 }
 
 /* 对节点的释放，如果这里包含有其他指针，需要统一在这里一起释放 */
-void freeNode(link free_node){
+void freeNode(pSnode free_node){
 	// free(free_node -> data);
 	free(free_node);
 }
 
 /* 双向链表删除节点 */
-int deleteNode(link del_node, dll_compare_function self_defined_compare){
-	link current;
-	link prev;
-	link next;
+int deleteNode(pSnode del_node, dll_compare_function self_defined_compare){
+	pSnode current;
+	pSnode prev;
+	pSnode next;
 
 	if(head == NULL){
 		return 0;
@@ -163,8 +163,8 @@ int deleteNode(link del_node, dll_compare_function self_defined_compare){
 /* 删除一个头结点, 并返回删除的头结点指针 */
 void * deleteNodeFromHead(){
 	void * data;
-	link current;
-	link next;
+	pSnode current;
+	pSnode next;
 
 	if(head == NULL){
 		return NULL;
@@ -187,8 +187,8 @@ void * deleteNodeFromHead(){
 //@return 是被删除的链表元素
 void * deleteNodeFromTail(){
 	void * data;
-	link current;
-	link prev;
+	pSnode current;
+	pSnode prev;
 
 	if(tail == NULL){
 		return NULL;
@@ -208,7 +208,7 @@ void * deleteNodeFromTail(){
 
 /* 根据位置获取链表中的特定元素(第一个元素的位置为1) */
 void * getNode(int node_index){
-	link current;
+	pSnode current;
 	if(head == NULL){
 		return NULL;
 	}

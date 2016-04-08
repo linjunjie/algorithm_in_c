@@ -50,11 +50,11 @@ int push_queue(queue * q, element * e){
 		return 0;
 	}
 
-	struct node n;
-	n.data = (element *)malloc(sizeof(element));
-	memcpy(n.data, e, sizeof(element));
+	Snode node;
+	node.data = (element *)malloc(sizeof(element));
+	memcpy(node.data, e, sizeof(element));
 
-	addNodeToHead(&n, myPrintQueueData);
+	addNodeToHead(&node, myPrintQueueData);
 
 	q -> tail += 1;
 

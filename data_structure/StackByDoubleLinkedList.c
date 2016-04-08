@@ -71,7 +71,7 @@ int push_stack(stack * s, element * e){
 	}
 
 	/* 将压入栈中的元素添加到链表的开头 */
-	struct node n;
+	Snode n;
 	n.data = (element *)malloc(sizeof(element));
 	memcpy(n.data, e, sizeof(element));
 	addNodeToHead(&n, myPrintStackData);
