@@ -53,7 +53,9 @@ int push_queue(queue * q, element * e){
 	}
 
 	struct node n;
-	n.data = e;
+	n.data = (element *)malloc(sizeof(element));
+	memcpy(n.data, e, sizeof(element));
+	
 	addNodeToHead(&n, myPrintPriorityQueueData);
 
 	q -> tail += 1;
@@ -66,7 +68,8 @@ int pop_queue(queue * q, element * e){
 		return 0;
 	}
 
-	e = deleteNodeFromTail();
+	element * tmp = deleteNodeFromTail();
+	memcpy(e, tmp, sizeof(element));
 
 	q -> tail -= 1;
 
@@ -106,7 +109,7 @@ int main(int argc, char * argv[]){
 	GET_ARRAY_LEN(data, len);
 
 	initList();
-	
+
 	queue * q;
 
 	q = create_queue(len);
@@ -115,15 +118,13 @@ int main(int argc, char * argv[]){
 	}
 
 	//声明一个队列元素指针
-	element * e;
-
-	e = (element *) malloc (sizeof(element));
+	element e;
 
 	/* 元素入队列 */
 	for(int i=0; i<len; i++){
-		e -> num = data[i][0];
-		e -> priority = data[i][1];
-		push_queue(q, e);
+		e.num = data[i][0];
+		e.priority = data[i][1];
+		push_queue(q, &e);
 	}
 
 	//打印整个队列
@@ -131,8 +132,8 @@ int main(int argc, char * argv[]){
 	// return 1;
 
 	printf("%s\n", "print the whole queue elements:");
-	while(pop_queue(q, e) != 0){
-		printf("num:%d, priority:%d\n", e -> num, e->priority);
+	while(pop_queue(q, &e) != 0){
+		printf("num:%d, priority:%d\n", e.num, e.priority);
 	}
 
 }

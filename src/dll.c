@@ -126,6 +126,7 @@ int addNodeAscend(link add_node, dll_compare_function self_defined_compare){
 
 /* 对节点的释放，如果这里包含有其他指针，需要统一在这里一起释放 */
 void freeNode(link free_node){
+	// free(free_node -> data);
 	free(free_node);
 }
 
@@ -166,7 +167,6 @@ void * deleteNodeFromHead(){
 	link next;
 
 	if(head == NULL){
-		// return -1;
 		return NULL;
 	}
 
@@ -184,6 +184,7 @@ void * deleteNodeFromHead(){
 
 //删除链表尾部元素
 //for 队列
+//@return 是被删除的链表元素
 void * deleteNodeFromTail(){
 	void * data;
 	link current;

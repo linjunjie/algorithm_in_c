@@ -72,7 +72,8 @@ int push_stack(stack * s, element * e){
 
 	/* 将压入栈中的元素添加到链表的开头 */
 	struct node n;
-	n.data = e;
+	n.data = (element *)malloc(sizeof(element));
+	memcpy(n.data, e, sizeof(element));
 	addNodeToHead(&n, myPrintStackData);
 
 	/* 栈顶位置 +1 */
@@ -88,8 +89,14 @@ int pop_stack(stack * s, element * e){
 		return 0;
 	}
 
+	//开辟一块儿内存空间
+	element * tmp = (element *)malloc(sizeof(element));
+
 	/* 从链表的头部位置开始删除元素 */
-	e = deleteNodeFromHead();
+	tmp = deleteNodeFromHead();
+
+	//拷贝内存区到我们的参数指针element *中
+	memcpy(e, tmp, sizeof(element));
 
 	/* 栈顶位置 -1 */
 	s -> top -= 1;
@@ -132,7 +139,7 @@ int main(int argc, char * argv[]){
 	GET_ARRAY_LEN(data, len);
 
 	initList();
-	
+
 	/* 声明一个栈指针 */
 	stack * s;
 

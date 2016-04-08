@@ -51,7 +51,9 @@ int push_queue(queue * q, element * e){
 	}
 
 	struct node n;
-	n.data = e;
+	n.data = (element *)malloc(sizeof(element));
+	memcpy(n.data, e, sizeof(element));
+
 	addNodeToHead(&n, myPrintQueueData);
 
 	q -> tail += 1;
@@ -64,7 +66,8 @@ int pop_queue(queue * q, element * e){
 		return 0;
 	}
 
-	e = deleteNodeFromTail();
+	element * tmp = deleteNodeFromTail();
+	memcpy(e, tmp, sizeof(element));
 
 	q -> tail -= 1;
 
@@ -96,7 +99,7 @@ int main(int argc, char * argv[]){
 	GET_ARRAY_LEN(data, len);
 
 	initList();
-	
+
 	queue * q;
 
 	q = create_queue(len);
