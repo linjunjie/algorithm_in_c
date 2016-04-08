@@ -3,6 +3,7 @@
  *
  *	这里实现的是最大优先级队列
  *	和普通队列的主要区别在于查找和出队列部分
+ *	基本上，这里的实现是，在插入的时候将优先级越大的元素插入越靠近出队列的位置，这样最后优先级最大的就可以先出队列
  */
 
 #include "dll.h"
@@ -23,6 +24,7 @@ typedef struct queue_struct {
 } queue;
 
 int myPrintPriorityQueueData(void * data);
+int myComparePriorityQueueData(void * left, void * right);
 
 queue * create_queue(int size){
 	queue * q;
@@ -56,7 +58,8 @@ int push_queue(queue * q, element * e){
 	node.data = (element *)malloc(sizeof(element));
 	memcpy(node.data, e, sizeof(element));
 
-	addNodeToHead(&node, myPrintPriorityQueueData);
+	//优先级队列的插入是参照优先级大小的
+	addNodeWithPriority(&node, myComparePriorityQueueData);
 
 	q -> tail += 1;
 
@@ -82,6 +85,28 @@ int myPrintPriorityQueueData(void * data){
 	e = data;
 	printf("num : %d, priority : %d\n", e -> num, e -> priority);
 	return 1;
+}
+
+//先判断优先级，在判断数值
+int myComparePriorityQueueData(void * left, void * right){
+	element * eleft, * eright;
+	eleft = left;
+	eright = right;
+	if(eleft -> priority < eright -> priority){
+		return -1;
+	}else if(eleft -> priority > eright -> priority){
+		return 1;
+	}else if(eleft -> priority == eright -> priority){
+		if(eleft -> num < eright -> num){
+			return -1;
+		}else if(eleft -> num == eright -> num){
+			return 1;
+		}else if(eleft -> num == eright -> num){
+			return 0;
+		}
+	}
+
+	return -2;
 }
 
 //打印整个队列
@@ -128,10 +153,10 @@ int main(int argc, char * argv[]){
 	}
 
 	//打印整个队列
-	// print_queue();
+	print_queue();
 	// return 1;
 
-	printf("%s\n", "print the whole queue elements:");
+	printf("%s\n", "pop the priority queue elements:");
 	while(pop_queue(q, &e) != 0){
 		printf("num:%d, priority:%d\n", e.num, e.priority);
 	}

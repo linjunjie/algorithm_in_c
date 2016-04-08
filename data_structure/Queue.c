@@ -77,12 +77,8 @@ int pop_queue(queue * q, element * e){
 //打印队列元素
 int myPrintQueueData(void * data){
 	element * e = data;
-	if(e == NULL){
-		printf("num : %s\n", "is NULL");
-	}else{
-		printf("num : %d\n", e -> num);
-	}
-	
+	printf("%d,", e -> num);
+
 	return 1;
 }
 
@@ -117,14 +113,14 @@ int main(int argc, char * argv[]){
 	}
 
 	//打印整个队列
-	// print_queue();
+	print_queue();
 	// return 1;
 
-	printf("%s\n", "print the whole queue elements:");
+	printf("%s\n", "pop the queue elements:");
 	while(pop_queue(q, &e) != 0){
-		printf("%d\n", e.num);
+		printf("%d,", e.num);
 	}
-
+	printf("\n");
 }
 
 

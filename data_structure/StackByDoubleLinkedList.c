@@ -108,7 +108,7 @@ int pop_stack(stack * s, element * e){
 int myPrintStackData(void * data){
 	element  * e;
 	e = data;
-	printf("num : %d\n", e -> num);
+	printf("%d,", e -> num);
 	return 1;
 }
 
@@ -165,7 +165,7 @@ int main(int argc, char * argv[]){
 	}
 
 	//打印整个栈内元素
-	// print_stack();
+	print_stack();
 	// return 1;
 
 	/* 打印栈内某一个元素 */
@@ -181,10 +181,11 @@ int main(int argc, char * argv[]){
 	// return 1;
 
 	/* 执行弹出操作，并打印被弹出的栈元素 */
-	printf("%s\n", "print the whole stack elements:");
+	printf("%s\n", "pop the stack elements:");
 	while(pop_stack(s, e) != 0){
-		printf("%d\n", e -> num);
+		printf("%d,", e -> num);
 	}
+	printf("\n");
 
 	return 1;
 }

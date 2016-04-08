@@ -13,7 +13,7 @@ void initList(){
 /* 打印以head作为头开始的链表 */
 void printdll(pSnode head, dll_print_function self_defined_print){
 	pSnode node = head;
-	printf("print the whole linkedlist:\n");
+	// printf("print the whole linkedlist:\n");
 	while(node != NULL){
 		self_defined_print(node -> data);
 		node = node -> next;
@@ -48,7 +48,6 @@ int addNodeToHead(pSnode add_node, dll_print_function self_defined_print){
 			head = tmp;
 		}
 	}
-	
 
 	return 1;
 }
@@ -84,7 +83,7 @@ int addNodeToTail(pSnode add_node){
 }
 
 /* 按照从小到大的顺序插入节点 */
-int addNodeAscend(pSnode add_node, dll_compare_function self_defined_compare){
+int addNodeWithPriority(pSnode add_node, dll_compare_function self_defined_compare){
 	pSnode prev,current;
 	pSnode tmp;
 
@@ -96,7 +95,7 @@ int addNodeAscend(pSnode add_node, dll_compare_function self_defined_compare){
 	tmp -> prev = tmp -> next = NULL;
 
 	if(head == NULL){	/* 如果是空链接 */
-		head = tmp;		/* 直接将节点加入头结点 */
+		head = tail = tmp;		/* 直接将节点加入头结点 */
 	}else{
 		current = head;	/* 从头结点出发寻找 */
 		prev = current -> prev;
@@ -104,6 +103,7 @@ int addNodeAscend(pSnode add_node, dll_compare_function self_defined_compare){
 			if(current == NULL){			/* 如果是最后一个节点，也就说明到了最后一个节点扔未找到合适的位置，则插入节点应插在链表尾部 (注意此时的current节点绝对不可能是head头结点) */
 				tmp -> prev = prev;			/* 插入节点的头结点应该是上一个节点 */
 				prev -> next = tmp;			/* 上一个节点的尾节点应该是插入节点 */
+				tail = tmp;
 				break;
 			}else if(self_defined_compare(tmp -> data, current -> data) == -1){			/* 如果tmp < current, 则此时找到了自己应该插入的位置 */
 				if(current == head){		/* 如果此时是头结点 */
