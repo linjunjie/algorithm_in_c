@@ -1,7 +1,8 @@
 /**
- *	队列 - 通过双向链表实现
+ *	优先级队列 - 通过双向链表实现
  *
- *	FIFO first in, first out
+ *	这里实现的是最大优先级队列
+ *	和普通队列的主要区别在于查找和出队列部分
  */
 
 #include "dll.h"
@@ -9,6 +10,7 @@
 //队列元素
 typedef struct queue_element_struct {
 	int num;
+	int priority;	//优先级
 } element;
 
 //队列
@@ -20,7 +22,7 @@ typedef struct queue_struct {
 	int min;
 } queue;
 
-int myPrintQueueData(void * data);
+int myPrintPriorityQueueData(void * data);
 
 queue * create_queue(int size){
 	queue * q;
@@ -52,7 +54,7 @@ int push_queue(queue * q, element * e){
 
 	struct node n;
 	n.data = e;
-	addNodeToHead(&n, myPrintQueueData);
+	addNodeToHead(&n, myPrintPriorityQueueData);
 
 	q -> tail += 1;
 
@@ -72,26 +74,34 @@ int pop_queue(queue * q, element * e){
 }
 
 //打印队列元素
-int myPrintQueueData(void * data){
-	element * e = data;
-	if(e == NULL){
-		printf("num : %s\n", "is NULL");
-	}else{
-		printf("num : %d\n", e -> num);
-	}
-	
+int myPrintPriorityQueueData(void * data){
+	element * e;
+	e = data;
+	printf("num : %d, priority : %d\n", e -> num, e -> priority);
 	return 1;
 }
 
 //打印整个队列
 int print_queue(){
-	printf("%s\n", "print the whole queue based on the linkedlist:");
-	printdll(head, myPrintQueueData);
+	printf("%s\n", "print the whole priority queue based on the linkedlist:");
+	printdll(head, myPrintPriorityQueueData);
 	return 1;
 }
 
+//自定义比较函数
+int myCompare(void * data1, void * data2){
+	element * e1, * e2;
+	e1 = data1;
+	e2 = data2;
+	if(e1 -> num < e2 -> num){
+		return 1;
+	}else{
+		return 0;
+	}
+}
+
 int main(int argc, char * argv[]){
-	int data[] = {8,5,3,1,10,2,7,9,4,6};
+	int data[5][2] = {{8,5},{3,1},{10,2},{7,9},{4,6}};
 	int len;
 	GET_ARRAY_LEN(data, len);
 
@@ -104,13 +114,16 @@ int main(int argc, char * argv[]){
 		return 0;
 	}
 
-	//声明一个队列元素结构
-	element e;
+	//声明一个队列元素指针
+	element * e;
+
+	e = (element *) malloc (sizeof(element));
 
 	/* 元素入队列 */
 	for(int i=0; i<len; i++){
-		e.num = data[i];
-		push_queue(q, &e);
+		e -> num = data[i][0];
+		e -> priority = data[i][1];
+		push_queue(q, e);
 	}
 
 	//打印整个队列
@@ -118,10 +131,8 @@ int main(int argc, char * argv[]){
 	// return 1;
 
 	printf("%s\n", "print the whole queue elements:");
-	while(pop_queue(q, &e) != 0){
-		printf("%d\n", e.num);
+	while(pop_queue(q, e) != 0){
+		printf("num:%d, priority:%d\n", e -> num, e->priority);
 	}
 
 }
-
-

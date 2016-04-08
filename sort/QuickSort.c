@@ -16,7 +16,7 @@
 // 将序列中第一个数作为基准值，然后归位到中间，之后两边依次分治递归
 void MyQuickSort (int* pData, int start, int end){
 	int i,j,k;
-	int mid;	// 中指所在的元素索引
+	int mid;	// 中值所在的元素索引
 	int tmp;	// 被比较的符合特征的元素
 	int len;
 

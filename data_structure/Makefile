@@ -35,7 +35,8 @@ all : $(LIB_OBJ) \
 	DoubleCircularLinkedList \
 	StackByArr \
 	StackByDoubleLinkedList \
-	Queue
+	Queue \
+	PriorityQueue
 
 #编译静态链接库
 libdll.a : dll.o
@@ -76,6 +77,10 @@ StackByDoubleLinkedList : StackByDoubleLinkedList.c
 Queue : Queue.c
 	$(CC) $(COMMON_FLAGS) $(LIBS) -ldll Queue.c -o Queue
 
+#优先级队列 - 通过双向链表库libdll实现的最大优先级队列
+PriorityQueue : PriorityQueue.c
+	$(CC) $(COMMON_FLAGS) $(LIBS) -ldll PriorityQueue.c -o PriorityQueue
+
 # .PHONY是为了指定后面的元素，例如这里的clean并不是一个真正的文件，只是一个假想工作目标
 .PHONY : clean
 
@@ -87,4 +92,5 @@ clean :
 			DoubleCircularLinkedList \
 			StackByArr \
 			StackByDoubleLinkedList \
-			Queue
+			Queue \
+			PriorityQueue

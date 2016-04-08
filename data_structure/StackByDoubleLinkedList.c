@@ -1,8 +1,8 @@
 #include "dll.h"
-struct _stack{
+struct stack_struct{
 
 	/* 栈内容纳的元素 */
-	struct _stack_element * base;
+	struct stack_element * base;
 
 	/* 栈可以容纳元素的最大数 */
 	int max;
@@ -17,100 +17,109 @@ struct _stack{
 	int top;
 };
 
-typedef struct _stack stack_struct;
+typedef struct stack_struct stack;
 
 /* 一个最简单的栈元素，只保存一个整形变量 */
-struct _stack_element
+struct stack_element
 {
 	int num;
 };
 
-typedef struct _stack_element stack_element_struct;
+typedef struct stack_element element;
 
+int myPrintStackData(void * data);
 
-stack_struct * create_stack(int size){
-	stack_struct * stack;
+stack * create_stack(int size){
+	stack * s;
 	assert(size > 0);
 
-	stack = (stack_struct *) malloc (sizeof(stack_struct));
-	if(stack == NULL){
+	s = (stack *) malloc (sizeof(stack));
+	if(s == NULL){
 		return NULL;
 	}
 
-	stack -> size = size;
-	stack -> base = (stack_element_struct *) malloc ( size * sizeof( stack_element_struct ));
-	if(stack -> base == NULL){
+	s -> size = size;
+	s -> base = (element *) malloc ( size * sizeof( element ));
+	if(s -> base == NULL){
 		return NULL;
 	}
 
-	stack -> min = 0;
-	stack -> max = size - 1;
-	stack -> top = -1;
+	s -> min = 0;
+	s -> max = size - 1;
+	s -> top = -1;
 
-	return stack;
+	return s;
 }
 
 /* 销毁栈 */
-void destroy_stack(stack_struct * stack){
-	if(stack == NULL){
+void destroy_stack(stack * s){
+	if(s == NULL){
 		return;
 	}
 
-	free(stack -> base);
-	free(stack);
+	free(s -> base);
+	free(s);
 
 	return;
 }
 
-int push_stack(stack_struct * stack, stack_element_struct * element){
+int push_stack(stack * s, element * e){
 
 	/* 栈满 */
-	if(stack -> top == stack -> max){
+	if(s -> top == s -> max){
 		return 0;
 	}
 
-	/* 降压入栈中的元素添加到链表的开头 */
-	struct node op_node;
-	op_node.num = element -> num;
-	addNodeToHead(&op_node);
+	/* 将压入栈中的元素添加到链表的开头 */
+	struct node n;
+	n.data = e;
+	addNodeToHead(&n, myPrintStackData);
 
 	/* 栈顶位置 +1 */
-	stack -> top += 1;
+	s -> top += 1;
 
 	return 1;
 }
 
-int pop_stack(stack_struct * stack, stack_element_struct * element){
+int pop_stack(stack * s, element * e){
 
 	/* 空栈 */
-	if(stack -> top == -1){
+	if(s -> top == -1){
 		return 0;
 	}
 
 	/* 从链表的头部位置开始删除元素 */
-	element -> num = deleteNodeFromHead();
+	e = deleteNodeFromHead();
 
 	/* 栈顶位置 -1 */
-	stack -> top -= 1;
+	s -> top -= 1;
 
+	return 1;
+}
+
+//打印队列元素
+int myPrintStackData(void * data){
+	element  * e;
+	e = data;
+	printf("num : %d\n", e -> num);
 	return 1;
 }
 
 /* 打印整个栈: head -> tail */
 int print_stack(){
 	printf("%s\n", "print the whole stack based on the linkedlist:");
-	print(head);
+	printdll(head, myPrintStackData);
 	return 1;
 }
 
 /* 查看指定栈位置的栈元素 */
-int view_element(stack_struct * stack, int element_num){
-	if(stack -> top == -1){
-		return -1;
+void * view_element(stack * s, int element_num){
+	if(s -> top == -1){
+		return NULL;
 	}
 
-	if(stack -> top - element_num < 0){
-		return -1;
+	if(s -> top - element_num < 0){
+		return NULL;
 	}
 
 	return getNode(element_num);
@@ -118,31 +127,34 @@ int view_element(stack_struct * stack, int element_num){
 
 int main(int argc, char * argv[]){
 	int data[] = {8,5,3,1,10,2,7,9,4,6};
+	// int data[] = {8,5};
 	int len;
 	GET_ARRAY_LEN(data, len);
 
+	initList();
+	
 	/* 声明一个栈指针 */
-	stack_struct * stack;
+	stack * s;
 
 	/* 构建一个栈,长度为上面的数组长度 */
-	stack = create_stack (len);
-	if(stack == NULL){
+	s = create_stack (len);
+	if(s == NULL){
 		return 0;
 	}
 
 	/* 声明一个栈元素 */
-	stack_element_struct * element;
+	element * e;
 
 	/* 为栈元素开辟内存空间 */
-	element = (stack_element_struct *) malloc (sizeof( stack_element_struct ));
-	if(element == NULL){
+	e = (element *) malloc (sizeof( element ));
+	if(e == NULL){
 		return 0;
 	}
 
 	/* 将上面的数组元素全部压入栈 */
 	for(int i=0; i<len; i++){
-		element -> num = data[i];
-		push_stack(stack, element);
+		e -> num = data[i];
+		push_stack(s, e);
 	}
 
 	//打印整个栈内元素
@@ -163,8 +175,8 @@ int main(int argc, char * argv[]){
 
 	/* 执行弹出操作，并打印被弹出的栈元素 */
 	printf("%s\n", "print the whole stack elements:");
-	while(pop_stack(stack, element) != 0){
-		printf("%d\n", element -> num);
+	while(pop_stack(s, e) != 0){
+		printf("%d\n", e -> num);
 	}
 
 	return 1;

@@ -11,19 +11,18 @@ void initList(){
 }
 
 /* 打印以head作为头开始的链表 */
-void print(link head){
-	link node;
-	node = head;
+void printdll(link head, dll_print_function self_defined_print){
+	link node = head;
 	printf("print the whole linkedlist:\n");
 	while(node != NULL){
-		printf("%d,", node -> num);
+		self_defined_print(node -> data);
 		node = node -> next;
 	}
 	printf("\n\n");
 }
 
 /* 将一个节点加入到双向链表的开始 */
-int addNodeToHead(link add_node){
+int addNodeToHead(link add_node, dll_print_function self_defined_print){
 	link tmp;
 	link current;
 
@@ -31,21 +30,25 @@ int addNodeToHead(link add_node){
 	if(tmp == NULL){
 		return 0;
 	}
-	tmp -> num = add_node -> num;
-	tmp -> prev = NULL;
-	tmp -> next = NULL;
+
+	memcpy(tmp, add_node, sizeof(struct node));
+	tmp -> prev = tmp -> next = NULL;
 
 	if(head == NULL){
 		head = tail = tmp;
 	}else{
-		current = head;
 		if(head == tail){
-			tail = current;
+			tmp -> next = tail;
+			tail -> prev = tmp;
+			head = tmp;
+		}else{
+			current = head;
+			tmp -> next = current;
+			current -> prev = tmp;
+			head = tmp;
 		}
-		tmp -> next = current;
-		current -> prev = tmp;
-		head = tmp;
 	}
+	
 
 	return 1;
 }
@@ -59,9 +62,9 @@ int addNodeToTail(link add_node){
 	if(tmp == NULL){
 		return 0;
 	}
-	tmp -> num = add_node -> num;
-	tmp -> prev = NULL;
-	tmp -> next = NULL;
+
+	memcpy(tmp, add_node, sizeof(struct node));
+	tmp -> prev = tmp -> next = NULL;
 
 	if(head == NULL){
 		tail = head = tmp;
@@ -81,7 +84,7 @@ int addNodeToTail(link add_node){
 }
 
 /* 按照从小到大的顺序插入节点 */
-int addNodeAscend(link add_node){
+int addNodeAscend(link add_node, dll_compare_function self_defined_compare){
 	link prev,current;
 	link tmp;
 
@@ -102,7 +105,7 @@ int addNodeAscend(link add_node){
 				tmp -> prev = prev;			/* 插入节点的头结点应该是上一个节点 */
 				prev -> next = tmp;			/* 上一个节点的尾节点应该是插入节点 */
 				break;
-			}else if(tmp -> num < current -> num){			/* 如果找到了自己应该插入的位置 */
+			}else if(self_defined_compare(tmp -> data, current -> data) == -1){			/* 如果tmp < current, 则此时找到了自己应该插入的位置 */
 				if(current == head){		/* 如果此时是头结点 */
 					current -> prev = tmp;	/* 则此时当前节点不再作为头结点，并且当前节点的头结点变为了插入节点 */
 					tmp -> next = current;	/* 插入节点的尾节点应该是当前节点 */
@@ -127,7 +130,7 @@ void freeNode(link free_node){
 }
 
 /* 双向链表删除节点 */
-int deleteNode(link del_node){
+int deleteNode(link del_node, dll_compare_function self_defined_compare){
 	link current;
 	link prev;
 	link next;
@@ -138,7 +141,7 @@ int deleteNode(link del_node){
 
 	current = head;
 	for(;;current = current -> next){
-		if(current -> num == del_node -> num){
+		if(self_defined_compare(current -> data, del_node -> data) == 0){		//如果current == del_node
 			if(current == head){
 				head = current -> next;
 				head -> prev = NULL;
@@ -149,7 +152,7 @@ int deleteNode(link del_node){
 				next -> prev = prev;
 			}
 			freeNode(current);
-			printf("delete node: %d success!\n\n", current -> num);
+			// printf("delete node: %d success!\n\n", current -> num);
 
 			return 1;
 		}
@@ -157,62 +160,63 @@ int deleteNode(link del_node){
 }
 
 /* 删除一个头结点, 并返回删除的头结点指针 */
-int deleteNodeFromHead(){
-	int del_node;
+void * deleteNodeFromHead(){
+	void * data;
 	link current;
 	link next;
 
 	if(head == NULL){
-		return -1;
+		// return -1;
+		return NULL;
 	}
 
 	current = head;
 	next = head -> next;
-	del_node = current -> num;
+	data = current -> data;
 	if(next != NULL){
 		next -> prev = NULL;
 		head = next;
 	}
 	freeNode(current);
 
-	return del_node;
+	return data;
 }
 
 //删除链表尾部元素
 //for 队列
-int deleteNodeFromTail(){
-	int del_node;
+void * deleteNodeFromTail(){
+	void * data;
 	link current;
 	link prev;
 
 	if(tail == NULL){
-		return -1;
+		return NULL;
 	}
 
 	current = tail;
 	prev = tail -> prev;
-	del_node = current -> num;
+	data = current -> data;
 	if(prev != NULL){
 		prev -> next = NULL;
 		tail = prev;
 	}
 	freeNode(current);
 
-	return del_node;
+	return data;
 }
 
 /* 根据位置获取链表中的特定元素(第一个元素的位置为1) */
-int getNode(int node_index){
+void * getNode(int node_index){
 	link current;
 	if(head == NULL){
-		return -1;
+		return NULL;
 	}
 
 	int i = 1;
 	current = head;
 	for(;;current = current -> next, i++){
 		if(node_index == i){
-			return current -> num;
+			return current -> data;
 		}
 	}
 }
