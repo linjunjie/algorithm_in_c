@@ -43,7 +43,7 @@ pSnode head, tail;
 int node_count;
 
 void initList();
-void printdll(pSnode head, dll_print_function);
+void printdll(dll_print_function);
 int addNodeToHead(pSnode add_node, dll_print_function);
 int addNodeToTail(pSnode add_node);
 int addNodeWithPriority(pSnode add_node, dll_compare_function);

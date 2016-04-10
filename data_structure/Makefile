@@ -36,7 +36,8 @@ all : $(LIB_OBJ) \
 	StackByArr \
 	StackByDoubleLinkedList \
 	Queue \
-	PriorityQueue
+	PriorityQueue \
+	HashTable
 
 #编译静态链接库
 libdll.a : dll.o
@@ -81,6 +82,10 @@ Queue : Queue.c
 PriorityQueue : PriorityQueue.c
 	$(CC) $(COMMON_FLAGS) $(LIBS) -ldll PriorityQueue.c -o PriorityQueue
 
+#哈希表
+HashTable.o : HashTable.c
+	$(CC) $(COMMON_FLAGS) -c HashTable.c
+
 # .PHONY是为了指定后面的元素，例如这里的clean并不是一个真正的文件，只是一个假想工作目标
 .PHONY : clean
 
@@ -93,4 +98,5 @@ clean :
 			StackByArr \
 			StackByDoubleLinkedList \
 			Queue \
-			PriorityQueue
+			PriorityQueue \
+			HashTable

@@ -16,7 +16,7 @@ typedef struct queue_element_struct {
 
 //队列
 typedef struct queue_struct {
-	element * base;
+	// element * base;
 	int tail;
 	int size;
 	int max;
@@ -36,11 +36,12 @@ queue * create_queue(int size){
 		return NULL;
 	}
 
-	q -> base = (element * ) malloc ( size * sizeof( element ));
-	if(q -> base == NULL){
-		printf("%s\n", "初始化队列元素失败");
-		return NULL;
-	}
+	// q -> base = (element * ) malloc ( size * sizeof( element ));
+	// if(q -> base == NULL){
+	// 	printf("%s\n", "初始化队列元素失败");
+	// 	return NULL;
+	// }
+	
 	q -> size = size;
 	q -> tail = -1;
 	q -> max = size - 1;
@@ -112,7 +113,7 @@ int myComparePriorityQueueData(void * left, void * right){
 //打印整个队列
 int print_queue(){
 	printf("%s\n", "print the whole priority queue based on the linkedlist:");
-	printdll(head, myPrintPriorityQueueData);
+	printdll(myPrintPriorityQueueData);
 	return 1;
 }
 

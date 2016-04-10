@@ -4,14 +4,17 @@
 
 #include "dll.h"
 
+//声明这里需要用到的链表头尾节点
+pSnode head, tail;
+
 /* 初始化一个空链表 */
 void initList(){
-	head = NULL;
+	head = tail = NULL;
 	node_count = 0;
 }
 
 /* 打印以head作为头开始的链表 */
-void printdll(pSnode head, dll_print_function self_defined_print){
+void printdll(dll_print_function self_defined_print){
 	pSnode node = head;
 	// printf("print the whole linkedlist:\n");
 	while(node != NULL){

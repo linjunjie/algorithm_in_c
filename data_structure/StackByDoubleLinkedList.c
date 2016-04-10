@@ -2,7 +2,7 @@
 struct stack_struct{
 
 	/* 栈内容纳的元素 */
-	struct stack_element * base;
+	// struct stack_element * base;
 
 	/* 栈可以容纳元素的最大数 */
 	int max;
@@ -39,10 +39,11 @@ stack * create_stack(int size){
 	}
 
 	s -> size = size;
-	s -> base = (element *) malloc ( size * sizeof( element ));
-	if(s -> base == NULL){
-		return NULL;
-	}
+	
+	// s -> base = (element *) malloc ( size * sizeof( element ));
+	// if(s -> base == NULL){
+	// 	return NULL;
+	// }
 
 	s -> min = 0;
 	s -> max = size - 1;
@@ -57,7 +58,7 @@ void destroy_stack(stack * s){
 		return;
 	}
 
-	free(s -> base);
+	// free(s -> base);
 	free(s);
 
 	return;
@@ -112,10 +113,10 @@ int myPrintStackData(void * data){
 	return 1;
 }
 
-/* 打印整个栈: head -> tail */
+/* 打印整个栈 order : head to tail */
 int print_stack(){
 	printf("%s\n", "print the whole stack based on the linkedlist:");
-	printdll(head, myPrintStackData);
+	printdll(myPrintStackData);
 	return 1;
 }
 
