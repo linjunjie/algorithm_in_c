@@ -141,7 +141,7 @@ int insert_node_to_binary_tree(node * * relative_root_node, node * insert_node){
 /**
  *	从二叉树中根据值删除指定的节点
  *
- *	二叉树的删除比较复杂，我们要一种情况一种情况的去分析
+ *	二叉树的删除比较复杂，但是我们可以一种情况一种情况的去分析
  *
  */
 int delete_node_from_binary_tree(node * * parent, node * delete_node){
@@ -152,15 +152,17 @@ int delete_node_from_binary_tree(node * * parent, node * delete_node){
 	//函数内部临时代替parent
 	node * tmp = *parent;
 
-	node * n = NULL;
-	n = find_node_in_binary_tree(* parent, delete_node);
+	//node_gonna_delete也就是将要被删除的节点
+	node * node_gonna_delete = NULL;
+	node_gonna_delete = find_node_in_binary_tree(* parent, delete_node);
 
-	if(n == NULL){
+	//如果没有找到被删除的节点，则返回
+	if(node_gonna_delete == NULL){
 		return 0;
 	}
 
-	//如果删除的元素恰好是根节点
-	if(tmp == n){
+	//如果删除的元素恰好是局部根节点
+	if(tmp == node_gonna_delete){
 
 		//左右子树都没有
 		if( tmp -> left == NULL && tmp -> right == NULL)
@@ -202,7 +204,6 @@ int delete_node_from_binary_tree(node * * parent, node * delete_node){
 			else
 			{
 
-				// printf("%s\n", "zhli");
 				//在这里发现树节点是需要一个父节点指针的，否则删除的时候没法把父节点的右子节点设置为NULL
 				//另外这里只是赋值的话，就不会涉及到删除父节点的左右子节点的情况，所以就避免了复杂性
 				tmp -> data = pLeftMax -> data;
@@ -211,14 +212,109 @@ int delete_node_from_binary_tree(node * * parent, node * delete_node){
 				pLeftMax -> parent -> right = NULL;
 
 				//这个时候你删除的其实不是根节点，而是已经被找到的左子树中的最大节点
-				n = pLeftMax;
-
-				// free(n);
+				node_gonna_delete = pLeftMax;
 
 			}
 		}
 
-		free(n);
+		free(node_gonna_delete);
+		return 1;
+	}
+	//删除节点不是父节点时的情况
+	else
+	{
+		//被删除的节点没有左子树也没有右子树
+		if(node_gonna_delete -> left == NULL && node_gonna_delete -> right == NULL)
+		{
+			//如果是左节点，则将最后的左节点赋NULL
+			if(node_gonna_delete -> parent -> left == node_gonna_delete)
+			{
+				node_gonna_delete -> parent -> left = NULL;
+			}
+			//如果是右节点，则将最后的左节点赋NULL
+			else
+			{
+				node_gonna_delete -> parent -> right = NULL;
+			}
+		}
+		//左子树 != NULL && 右子树 == NULL
+		else if(node_gonna_delete -> left != NULL && node_gonna_delete -> right == NULL)
+		{
+			//如果在左侧，则直接将左子树的子节点上提
+			if(node_gonna_delete -> parent -> left == node_gonna_delete)
+			{
+				node_gonna_delete -> parent -> left = node_gonna_delete -> left;
+			}
+			//如果在右侧，也是把右子树上的左子节点作为根节点的右子节点
+			else
+			{
+				node_gonna_delete -> parent -> right = node_gonna_delete -> left;
+			}
+		}
+		//左子树 == NULL && 右子树 != NULL
+		else if(node_gonna_delete -> left == NULL && node_gonna_delete -> right != NULL)
+		{
+			//如果在左侧，则直接将左子树的右子节点上提
+			if(node_gonna_delete -> parent -> left == node_gonna_delete)
+			{
+				node_gonna_delete -> parent -> left = node_gonna_delete -> right;
+			}
+			//如果在右侧，也是把右子树上的右子节点作为根节点的右子节点
+			else
+			{
+				node_gonna_delete -> parent -> right = node_gonna_delete -> right;
+			}
+		}
+		//左右子树均不为空
+		else if(node_gonna_delete -> left != NULL && node_gonna_delete -> right != NULL)
+		{
+			//得到左子树的最大节点
+			node * pLeftMax = find_max_node(node_gonna_delete -> left);
+
+			//如果左节点是被删除节点左侧做大的节点
+			if(node_gonna_delete -> left == pLeftMax)
+			{
+				//如果被删除节点位于父节点的左侧，则修改父节点的左节点指向其左子树
+				if(node_gonna_delete == node_gonna_delete -> parent -> left)
+				{
+					node_gonna_delete -> parent -> left = node_gonna_delete -> left;
+				}
+				//如果被删除节点位于父节点的右侧，则修改父节点的右节点指向其左子树
+				else
+				{
+					node_gonna_delete -> parent -> right = node_gonna_delete -> left;
+				}
+
+				//将左节点父节点指向被删除节点的父节点
+				node_gonna_delete -> left -> parent = node_gonna_delete -> parent;
+
+				//将左节点的右节点指向被删除节点的右节点
+				node_gonna_delete -> left -> right = node_gonna_delete -> right;
+
+				//将被删除节点指向的整个左子树往上提到被删除节点的位置，所以这个时候被删除节点的左节点的父节点应该变为被提上来的被删除节点的左节点
+				node_gonna_delete -> right -> parent = node_gonna_delete -> left;
+
+			}
+			//如果左节点不是被删除节点左侧的最大节点
+			else
+			{
+
+				//将最大节点的数据赋值给被删除节点，因为后面被删除节点准备金蝉脱壳~~
+				node_gonna_delete -> data = pLeftMax -> data;
+
+				//将最大节点的父节点的右节点指向最大节点的左子树
+				pLeftMax -> parent -> right = pLeftMax -> left;
+
+				//将最大节点的左子树的父节点赋值为最大节点的父节点
+				pLeftMax -> left -> parent = pLeftMax -> parent;
+
+				//被删除节点金蝉脱壳，被删除的其实是最大节点~~
+				node_gonna_delete = pLeftMax;
+
+			}
+		}
+
+		free(node_gonna_delete);
 		return 1;
 	}
 
@@ -286,13 +382,13 @@ int print_tree(node * n){
 }
 
 int main(int argc, char * argv[]){
-	// int data[] = {8,5,3,1,10,2,7,9,4,6};
+	int data[] = {8,5,3,1,10,2,7,9,4,6};
 
 	//删除根节点的情况
 	// int data[] = {8,5,3};	//有左子树没有右子树
 	// int data[] = {3,5,8};	//有右子树没有左子树
 	// int data[] = {8,5,3,10};	//左右子树都有并且左节点就是左子树做大节点
-	int data[] = {8,5,7,10};	//左节点不是左子树最大节点
+	// int data[] = {8,5,7,10};	//左节点不是左子树最大节点
 
 	int len;
 	GET_ARRAY_LEN(data, len);
