@@ -5,6 +5,8 @@
  * @Description: 	Binary - 二叉树
  * @Datetime: 		2016-04-10 19:08:53
  * @Author: 		linjunjie
+ *
+ * 其实这是一个二叉查找树，所以应更名为 Binary Search Tree - 简称 BST
  */
 
 #include "algorithm.h"
@@ -21,9 +23,9 @@ node * root;
 /*
  *	函数声明
  */
-node * find_node_in_binary_tree(node * parent, node * n);
+node * find_node_in_binary_search_tree(node * parent, node * n);
 // int insert(node * * pnode, node * pparent, node * pinsert);
-int insert_node_to_binary_tree(node * * relative_root_node, node * insert_node);
+int insert_node_to_binary_search_tree(node * * relative_root_node, node * insert_node);
 node * find_max_node(node * parent);
 
 
@@ -71,11 +73,11 @@ int insert(node * * pnode, node * pparent, node * pinsert)
 
 /**
  * 	@params relative_root_node 相对根节点，所谓相对根节点也就是在某个局部树中的根节点
- *			不一定是真正的根节点，但是这个局部书可大可小，就算把整个树看做局部书也是可以的
+ *			不一定是真正的根节点，但是这个局部树可大可小，就算把整个树看做局部树也是可以的
  *			
  *	@params insert_node 需要插入的节点
  */
-int insert_node_to_binary_tree(node * * relative_root_node, node * insert_node){
+int insert_node_to_binary_search_tree(node * * relative_root_node, node * insert_node){
 
 	if((*relative_root_node) == NULL)
 	{
@@ -106,7 +108,7 @@ int insert_node_to_binary_tree(node * * relative_root_node, node * insert_node){
  *	这个方法是不包含处理父节点的函数，这个方法再删除左节点不是左子树最大节点的时候是无法正确删除节点的
  *	这里暂不删除这个方法，留在这里让大家看看
  */
-// int insert_node_to_binary_tree(node * * relative_root_node, node * insert_node){
+// int insert_node_to_binary_search_tree(node * * relative_root_node, node * insert_node){
 
 // 	if((*relative_root_node) == NULL)
 // 	{
@@ -122,11 +124,11 @@ int insert_node_to_binary_tree(node * * relative_root_node, node * insert_node){
 // 	{
 // 		if(insert_node -> data < (* relative_root_node) -> data)
 // 		{
-// 			insert_node_to_binary_tree(&(*relative_root_node) -> left, insert_node);
+// 			insert_node_to_binary_search_tree(&(*relative_root_node) -> left, insert_node);
 // 		}
 // 		else if(insert_node -> data > (* relative_root_node) -> data)
 // 		{
-// 			insert_node_to_binary_tree(&(*relative_root_node) -> right, insert_node);
+// 			insert_node_to_binary_search_tree(&(*relative_root_node) -> right, insert_node);
 // 		}else
 // 		{
 // 			return 0;
@@ -144,7 +146,7 @@ int insert_node_to_binary_tree(node * * relative_root_node, node * insert_node){
  *	二叉树的删除比较复杂，但是我们可以一种情况一种情况的去分析
  *
  */
-int delete_node_from_binary_tree(node * * parent, node * delete_node){
+int delete_node_from_binary_search_tree(node * * parent, node * delete_node){
 	if(parent == NULL || delete_node == NULL){
 		return 0;
 	}
@@ -154,7 +156,7 @@ int delete_node_from_binary_tree(node * * parent, node * delete_node){
 
 	//node_gonna_delete也就是将要被删除的节点
 	node * node_gonna_delete = NULL;
-	node_gonna_delete = find_node_in_binary_tree(* parent, delete_node);
+	node_gonna_delete = find_node_in_binary_search_tree(* parent, delete_node);
 
 	//如果没有找到被删除的节点，则返回
 	if(node_gonna_delete == NULL){
@@ -350,15 +352,15 @@ node * find_max_node(node * parent){
  *	函数返回的是二叉树中的节点指针
  */
 
-node * find_node_in_binary_tree(node * parent, node * n){
+node * find_node_in_binary_search_tree(node * parent, node * n){
 	if(parent == NULL){
 		return NULL;
 	}
 
 	if(n -> data < parent -> data){
-		return find_node_in_binary_tree(parent -> left, n);
+		return find_node_in_binary_search_tree(parent -> left, n);
 	}else if(n -> data > parent -> data){
-		return find_node_in_binary_tree(parent -> right, n);
+		return find_node_in_binary_search_tree(parent -> right, n);
 	}else if(n -> data == parent -> data) {
 		return parent;
 	}
@@ -399,14 +401,14 @@ int main(int argc, char * argv[]){
 	for (int i = 0; i < len; i++)
 	{
 		n.data = data[i];
-		insert_node_to_binary_tree(&root, &n);
+		insert_node_to_binary_search_tree(&root, &n);
 	}
 
 	/**
 	 *	寻找元素为5的节点，并得到节点指针
 	 */
 	// n.data = 8;
-	// node * node_to_find = find_node_in_binary_tree(root, &n);
+	// node * node_to_find = find_node_in_binary_search_tree(root, &n);
 	// printf("%p\n", node_to_find);
 	// printf("%d\n", node_to_find -> data);
 
@@ -415,7 +417,7 @@ int main(int argc, char * argv[]){
 	 *	删除数据值为8的节点元素
 	 */
 	n.data = 8;
-	delete_node_from_binary_tree(&root, &n);
+	delete_node_from_binary_search_tree(&root, &n);
 
 
 	printf("%s\n", "打印二叉树 :");
