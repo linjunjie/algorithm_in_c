@@ -60,9 +60,9 @@ int insert(node * * pnode, node * pparent, node * pinsert)
 	else
 	{
 		if(pinsert -> data < (* pnode) -> data){
-			insert(&(* pnode) -> left, * pnode, pinsert);
+			insert(&((* pnode) -> left), *pnode, pinsert);
 		}else if(pinsert -> data > (* pnode) -> data){
-			insert(&(* pnode) -> right, * pnode, pinsert);
+			insert(&((* pnode) -> right), *pnode, pinsert);
 		}else{
 			return 0;
 		}
@@ -95,7 +95,7 @@ int insert_node_to_binary_search_tree(node * * relative_root_node, node * insert
 		return 1;
 	}
 
-	return insert( &(* relative_root_node), NULL, insert_node );
+	return insert(relative_root_node, NULL, insert_node );
 
 }
 
@@ -205,17 +205,20 @@ int delete_node_from_binary_search_tree(node * * parent, node * delete_node){
 			//如果左节点不是最大节点，那么就找到左子树中的最大节点提为根节点
 			else
 			{
-
 				//在这里发现树节点是需要一个父节点指针的，否则删除的时候没法把父节点的右子节点设置为NULL
 				//另外这里只是赋值的话，就不会涉及到删除父节点的左右子节点的情况，所以就避免了复杂性
 				tmp -> data = pLeftMax -> data;
 
 				//这里用到了被删除的左子树最大节点的父节点，需要把父节点指向的右子节点指向NULL
-				pLeftMax -> parent -> right = NULL;
+				pLeftMax -> parent -> right = pLeftMax -> left;
+
+				//如果这个时候最大节点的右子节点不是NULL，那么还需要把右子节点的父节点改为指向最大节点的父节点
+				if(pLeftMax -> left != NULL){
+					pLeftMax -> left -> parent = pLeftMax -> parent;
+				}
 
 				//这个时候你删除的其实不是根节点，而是已经被找到的左子树中的最大节点
 				node_gonna_delete = pLeftMax;
-
 			}
 		}
 
@@ -270,7 +273,7 @@ int delete_node_from_binary_search_tree(node * * parent, node * delete_node){
 		//左右子树均不为空
 		else if(node_gonna_delete -> left != NULL && node_gonna_delete -> right != NULL)
 		{
-			//得到左子树的最大节点
+			//得到被删除节点左子树的最大节点
 			node * pLeftMax = find_max_node(node_gonna_delete -> left);
 
 			//如果左节点是被删除节点左侧做大的节点
@@ -300,7 +303,6 @@ int delete_node_from_binary_search_tree(node * * parent, node * delete_node){
 			//如果左节点不是被删除节点左侧的最大节点
 			else
 			{
-
 				//将最大节点的数据赋值给被删除节点，因为后面被删除节点准备金蝉脱壳~~
 				node_gonna_delete -> data = pLeftMax -> data;
 
@@ -308,7 +310,11 @@ int delete_node_from_binary_search_tree(node * * parent, node * delete_node){
 				pLeftMax -> parent -> right = pLeftMax -> left;
 
 				//将最大节点的左子树的父节点赋值为最大节点的父节点
-				pLeftMax -> left -> parent = pLeftMax -> parent;
+				//当然前提是你要先检查下最大节点有没有左子节点
+				if(pLeftMax -> left != NULL)
+				{
+					pLeftMax -> left -> parent = pLeftMax -> parent;
+				}
 
 				//被删除节点金蝉脱壳，被删除的其实是最大节点~~
 				node_gonna_delete = pLeftMax;
@@ -368,22 +374,90 @@ node * find_node_in_binary_search_tree(node * parent, node * n){
 	return NULL;
 }
 
+int print_tree_inorder(node * n);
+int print_tree_preorder(node * n);
+int print_tree_postorder(node * n);
 
-//递归方式打印二叉树
-int print_tree(node * n){
+//打印二叉树
+int print_tree(node * n, char * order){
 
+	if(strcmp(order, "inorder") == 0)
+	{
+		printf("%s\n", "中序遍历打印二叉树 :");
+		return print_tree_inorder(n);
+	}
+	else if(strcmp(order, "preorder") == 0)
+	{
+		printf("%s\n", "前序遍历打印二叉树 :");
+		return print_tree_preorder(n);
+	}
+	else if(strcmp(order, "postorder") == 0)
+	{
+		printf("%s\n", "后序遍历打印二叉树 :");
+		return print_tree_postorder(n);
+	}
+
+	printf("%s\n", "中序遍历打印二叉树 :");
+	return print_tree_inorder(n);
+}
+
+
+// 中序遍历
+int print_tree_inorder(node * n){
 	if(n == NULL){
 		return 0;
 	}else{
-		print_tree(n -> left);
+		print_tree_inorder(n -> left);
 		printf("%d\n", n -> data);
-		print_tree(n -> right);
+		print_tree_inorder(n -> right);
 	}
 
 	return 1;
 }
 
+//递归方式打印二叉树
+//前序遍历，父节点位于最前
+int print_tree_preorder(node * n){
+
+	if(n == NULL){
+		return 0;
+	}else{
+		printf("%d\n", n -> data);
+		print_tree_preorder(n -> left);
+		print_tree_preorder(n -> right);
+	}
+
+	return 1;
+}
+
+//后序遍历
+int print_tree_postorder(node * n){
+
+	if(n == NULL){
+		return 0;
+	}else{
+		print_tree_postorder(n -> left);
+		print_tree_postorder(n -> right);
+		printf("%d\n", n -> data);
+	}
+
+	return 1;
+}
+
+
 int main(int argc, char * argv[]){
+	/**
+	 *
+	 *				 8
+	 *			   /   \
+	 *			  5     10
+	 *			 / \   /
+	 *			3   7 9
+	 *		   / \
+	 *		  1   4
+	 *		   \
+	 *			2
+	 */
 	int data[] = {8,5,3,1,10,2,7,9,4,6};
 
 	//删除根节点的情况
@@ -416,12 +490,14 @@ int main(int argc, char * argv[]){
 	/**
 	 *	删除数据值为8的节点元素
 	 */
+	n.data = 3;
+	delete_node_from_binary_search_tree(&root, &n);
 	n.data = 8;
 	delete_node_from_binary_search_tree(&root, &n);
+	n.data = 10;
+	delete_node_from_binary_search_tree(&root, &n);
 
-
-	printf("%s\n", "打印二叉树 :");
-	print_tree(root);
+	print_tree(root, "inorder");
 
 	return 1;
 }
