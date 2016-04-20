@@ -47,10 +47,12 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 - [ ] 堆
 - [x] 树 - 二叉查找树(BST)
 - [x] 树 - 平衡二叉树(AVL)
-- [ ] 树 - 红黑树(RB)
+- [x] 树 - 红黑树(RBT)
 - [ ] 树 - B树
 - [ ] 树 - B+树
 - [ ] 树 - Trie树
+- [ ] 树 - BS树 - Size Balanced Tree
+- [ ] 树 - Merkle Tree - Dynamo中用来同步数据一致性的算法
 
 ## 使用方法:
 
@@ -112,3 +114,4 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 
 ### BinarySearchTree 	二叉查找树
 ### BalancedBinaryTree 	平衡二叉树 - 又称为AVL树，因其作者（Adelson-Velskii and Landis）而得名
+### RedBlackTree		红黑树 - 通过为节点着色并且为色彩赋予一定的规则来实现平衡

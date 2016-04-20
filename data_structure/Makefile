@@ -37,9 +37,7 @@ all : $(LIB_OBJ) \
 	StackByDoubleLinkedList \
 	Queue \
 	PriorityQueue \
-	HashTable \
-	BinarySearchTree \
-	BalancedBinaryTree
+	HashTable
 
 #编译静态链接库
 libdll.a : dll.o
@@ -88,14 +86,6 @@ PriorityQueue : PriorityQueue.c
 HashTable.o : HashTable.c
 	$(CC) $(COMMON_FLAGS) -c HashTable.c
 
-#二叉查找树
-BinarySearchTree.o : BinarySearchTree.c
-	$(CC) $(COMMON_FLAGS) -c BinarySearchTree.c
-
-#平衡二叉树
-BalancedBinaryTree.o : BalancedBinaryTree.c
-	$(CC) $(COMMON_FLAGS) -c BalancedBinaryTree.c
-
 # .PHONY是为了指定后面的元素，例如这里的clean并不是一个真正的文件，只是一个假想工作目标
 .PHONY : clean
 
@@ -109,7 +99,5 @@ clean :
 			StackByDoubleLinkedList \
 			Queue \
 			PriorityQueue \
-			HashTable \
-			BinarySearchTree \
-			BalancedBinaryTree
+			HashTable
 
