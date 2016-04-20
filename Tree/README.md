@@ -53,14 +53,14 @@
 
 	应用场景：查询，插入和删除都较多的情况
 
-- B树
+- B树 - N叉树(N>=2)
 
 - B+树
 
 - Merkle Tree , 又称为 Merkle Hash Tree, 因为其所有节点都是哈希值
 
-是Amazon Dynamo中用来同步数据一致性的算法
+	是Amazon Dynamo中用来同步数据一致性的算法
 
-Git在集群机器中的文件同步也是采用Merkle Tree
+	Git在集群机器中的文件同步也是采用Merkle Tree
 
 在分布式环境下进行比对和校验时，Merkle Tree会大大减少数据的传输量和计算复杂度

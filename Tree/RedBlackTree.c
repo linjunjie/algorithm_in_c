@@ -66,8 +66,37 @@ rbnode * get_uncle(rbnode * node)
 	}
 }
 
-//左平衡转（总之就是左边高度过高），属于LL型旋转
+//左旋转，这种情况就是右边高度过高了
 void rotate_left(rbnode * node)
+{
+	rbnode * tmp = node -> right;
+	node -> right = tmp -> left;
+	tmp -> left = node;
+	tmp -> parent = node -> parent;
+
+	//如果插入节点有父节点
+	if(node -> parent != NULL)
+	{
+		//如果插入节点是父节点的左子节点
+		if(node -> parent -> left == node)
+		{
+			node -> parent -> left = tmp;
+		}
+		else
+		{
+			node -> parent -> right = tmp;
+		}
+	}
+	else
+	{
+		rbt_root = tmp;
+	}
+
+	node -> parent = tmp;
+}
+
+//右旋转，这种情况就是左边过高了
+void rotate_right(rbnode * node)
 {
 	rbnode * tmp = node -> left;
 	node -> left = tmp -> right;
@@ -94,35 +123,6 @@ void rotate_left(rbnode * node)
 	}
 
 	//上面的操作结束之后，终于可以把插入节点的父节点设置为左子节点
-	node -> parent = tmp;
-}
-
-//右平衡转（总之就是右边高度过高），属于RR型旋转
-void rotate_right(rbnode * node)
-{
-	rbnode * tmp = node -> right;
-	node -> right = tmp -> left;
-	tmp -> left = node;
-	tmp -> parent = node -> parent;
-
-	//如果插入节点有父节点
-	if(node -> parent != NULL)
-	{
-		//如果插入节点是父节点的左子节点
-		if(node -> parent -> left == node)
-		{
-			node -> parent -> left = tmp;
-		}
-		else
-		{
-			node -> parent -> right = tmp;
-		}
-	}
-	else
-	{
-		rbt_root = tmp;
-	}
-
 	node -> parent = tmp;
 }
 
@@ -276,14 +276,14 @@ void modify_color(rbnode * * root, rbnode * node)
 		if(node == node -> parent -> right && node -> parent == get_grand_parent(node) -> left)
 		{
 			printf("%s\n", "case 4.1");
-			rotate_right(node -> parent);
+			rotate_left(node -> parent);
 			node = node -> left;
 		}
 		//插入节点是其父节点的左孩子，而父节点又是其父节点的右孩子
 		else if(node == node -> parent -> left && node -> parent == get_grand_parent(node) -> right)
 		{
 			printf("%s\n", "case 4.2");
-			rotate_left(node -> parent);
+			rotate_right(node -> parent);
 			node = node -> right;
 		}
 
@@ -294,13 +294,13 @@ void modify_color(rbnode * * root, rbnode * node)
 		if(node == node -> parent -> left && node -> parent == get_grand_parent(node) -> left)
 		{
 			printf("%s\n", "case 5.1");
-			rotate_left(get_grand_parent(node));
+			rotate_right(get_grand_parent(node));
 		}
 		// (node == node -> parent -> left && node -> parent == get_grand_parent(node) -> right)
 		else
 		{
 			printf("%s\n", "case 5.2");
-			rotate_right(get_grand_parent(node));
+			rotate_left(get_grand_parent(node));
 		}
 	}
 }
@@ -320,6 +320,18 @@ int main(int argc, char * argv[]){
 		insert_node_to_red_black_tree(&rbt_root, &n);
 	}
 
+	/**
+	 *		最终形态为：
+	 *			
+	 *				  	     5[黑]
+	 *			   		/    		\
+	 *			 2[红]   				  8[红]
+	 *			/	 \				   /		\
+	 *		  1[黑]   3[黑]	  	    7[黑]		10[黑]
+	 *					\		   /		    /
+	 *					4[红]	6[红]		  9[红]
+	 *			
+	 */
 	print_tree(rbt_root, "preorder");
 
 	return 1;
