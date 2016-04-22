@@ -1,10 +1,10 @@
 /**
  * 红黑树
  *
- * 因为红黑树不涉及到绝对平衡度的旋转，所以插入效率肯定比AVL高，因为不涉及到复杂的旋转
+ * 因为红黑树不涉及到高度平衡度的旋转，所以插入效率肯定比AVL高，因为不涉及到复杂的旋转
  * 但是也就是因为如此，所以平衡度肯定不如AVL树
  *
- * 红黑树的平衡规则是根据红黑树自己的颜色定义来调整的，而不是AVL那样根据左右子树深度只差不能超过1来调整的
+ * 红黑树的平衡规则是根据红黑树自己的节点颜色定义来调整的，而不是AVL那样根据左右子树深度差不能超过1来调整的
  * 这就是红黑树和AVL树的平衡调整的不同
  *
  * @Description: 	Description
@@ -66,7 +66,16 @@ rbnode * get_uncle(rbnode * node)
 	}
 }
 
-//左旋转，这种情况就是右边高度过高了
+/**
+ *	左旋转，这种情况就是右边高度过高了
+ *
+ *	算法描述
+ *	rotate_left(t)
+ *	1.	k <- right(t)
+ *	2.	right(t) <- left(k)
+ *	3.	left(k) <- t
+ *	4.	parent(k) <- parent(t)
+ */
 void rotate_left(rbnode * node)
 {
 	rbnode * tmp = node -> right;
@@ -95,7 +104,17 @@ void rotate_left(rbnode * node)
 	node -> parent = tmp;
 }
 
-//右旋转，这种情况就是左边过高了
+/**
+ *	右旋转，这种情况就是左边过高了
+ *
+ *	看到有对右旋的算法描述很好，拿来这里看一下：
+ *
+ *	rotate_right(t)
+ *	1.	k <- left(t)
+ *	2.	left(t) <- right(k)
+ *	3.	right(k) <- t
+ *	4.	parent(k) <- parent(t)
+ */
 void rotate_right(rbnode * node)
 {
 	rbnode * tmp = node -> left;
@@ -226,7 +245,7 @@ rbnode * insert_node_to_red_black_tree(rbnode * * root, rbnode * insert)
 
 void modify_color(rbnode * * root, rbnode * node)
 {
-	//如果根节点为空，也就是说是一棵空树的话，很简单，直接放到根节点即可
+	//如果根节点为空，也就是说是一棵空树的话，很简单，直接调整根节点颜色为黑色即可
 	if(node -> parent == NULL)
 	{
 		printf("%s\n", "case 1");
@@ -307,7 +326,7 @@ void modify_color(rbnode * * root, rbnode * node)
 
 int main(int argc, char * argv[]){
 	int data[] = {8,5,3,1,10,2,7,9,4,6};
-	// int data[] = {8,5,3,1,4};
+	// int data[] = {8,5,3,1,4};	//for test
 	int len;
 	GET_ARRAY_LEN(data, len);
 

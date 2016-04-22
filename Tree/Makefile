@@ -14,7 +14,8 @@ COMMON_FLAGS = -Wall $(INCLUDES)
 #所有需要生成的编译目标及其依赖
 all : BinarySearchTree \
 		BalancedBinaryTree \
-		RedBlackTree
+		RedBlackTree \
+		BTree
 
 #二叉查找树
 BinarySearchTree.o : BinarySearchTree.c
@@ -28,6 +29,10 @@ BalancedBinaryTree.o : BalancedBinaryTree.c
 RedBlackTree.o : RedBlackTree.c
 	$(CC) $(COMMON_FLAGS) -c RedBlackTree.c
 
+#B树
+BTree.o : BTree.c
+	$(CC) $(COMMON_FLAGS) -c BTree.c
+
 # .PHONY是为了指定后面的元素，例如这里的clean并不是一个真正的文件，只是一个假想工作目标
 .PHONY : clean
 
@@ -35,5 +40,6 @@ clean :
 	rm -rf $(LIB_DIR)/*.a *.o \
 			BinarySearchTree \
 			BalancedBinaryTree \
-			RedBlackTree
+			RedBlackTree \
+			BTree
 
