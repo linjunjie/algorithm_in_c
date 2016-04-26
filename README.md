@@ -60,37 +60,37 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 
 > 进入各个目录执行make即可编译文件，之后运行文件即可
 
-<span id='1'>Sort-排序</span>
+<span id="1">Sort-排序</span>
 
-<span id='1.1'>BubbleSort 冒泡排序</span>
-<span id='1.2'>InsertSort - Direct Insert Sort 插入排序(直接插入排序)</span>
-<span id='1.3'>ShellSort 希尔排序</span>
-<span id='1.4'>BinInsertSort 二分查找插入排序</span>
+<span id="1.1">BubbleSort 冒泡排序</span>
+<span id="1.2">InsertSort - Direct Insert Sort 插入排序(直接插入排序)</span>
+<span id="1.3">ShellSort 希尔排序</span>
+<span id="1.4">BinInsertSort 二分查找插入排序</span>
 
 > 直接插入排序对于大部分有序的序列排序时速度快。<br/>
 > 二分插入排序在直接插入的基本上改变了查找元素插入位置的方法，对于完全无序的序列来说，速度会变快，但是对开大部分有序的序列反而会更慢。<br/>
 > 希尔排序则利用直接插入排序对于大部分有序的序列速度快的特点，先让大部分序列有序，以此来提高排序效率。<br/>
 
-<span id='1.5'>SelectSort 选择排序</span>
-<span id='1.6'>QuickSort 快速排序</span>
-<span id='1.7'>MergeSort 归并排序</span>
+<span id="1.5">SelectSort 选择排序</span>
+<span id="1.6">QuickSort 快速排序</span>
+<span id="1.7">MergeSort 归并排序</span>
 
-<span id='2'>Search-查找</span>
+<span id="2">Search-查找</span>
 
-<span id='2.1'>BinarySearch 二分查找</span>
+<span id="2.1">BinarySearch 二分查找</span>
 
-<span id='3'>data_structure 数据结构</span>
+<span id="3">data_structure 数据结构</span>
 
-<span id='3.1'>SingleLinkedList 单向链表</span>
-<span id='3.2'>DoubleLinkedList 双向链表</span>
-<span id='3.3'>SingleCircularLinkedList 单向循环链表</span>
-<span id='3.4'>DoubleCircularLinkedList 双向循环链表</span>
-<span id='3.5'>StackByArr 通过数组实现的栈</span>
-<span id='3.6'>StackByDoubleLinkedList 通过双向链表实现的栈</span>
-<span id='3.7'>Queue 通过双向链表实现的队列</span>
-<span id='3.8'>PriorityQueue 通过双向链表实现的优先级队列</span>
-<span id='3.9'>PriorityQueue 通过堆表实现的优先级队列</span>
-<span id='3.10'>HashTable 哈希表</span>
+<span id="3.1">SingleLinkedList 单向链表</span>
+<span id="3.2">DoubleLinkedList 双向链表</span>
+<span id="3.3">SingleCircularLinkedList 单向循环链表</span>
+<span id="3.4">DoubleCircularLinkedList 双向循环链表</span>
+<span id="3.5">StackByArr 通过数组实现的栈</span>
+<span id="3.6">StackByDoubleLinkedList 通过双向链表实现的栈</span>
+<span id="3.7">Queue 通过双向链表实现的队列</span>
+<span id="3.8">PriorityQueue 通过双向链表实现的优先级队列</span>
+<span id="3.9">PriorityQueue 通过堆表实现的优先级队列</span>
+<span id="3.10">HashTable 哈希表</span>
 
 > 哈希表的主要问题在于设计好的哈希函数(可以得到均匀分布的key)和如何处理哈希冲突(hash collision)
 
@@ -113,7 +113,7 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 	3. 拉链法（是解决哈希冲突的最常用方法），在发生冲突的槽中使用链表存放冲突元素，也就是使用链表数组来解决冲突
 
 <span>Tree - 树</span>
-<span id='3.12'>BinarySearchTree 	二叉查找树</span>
-<span id='3.13'>BalancedBinaryTree 	平衡二叉树 - 又称为AVL树，因其作者（Adelson-Velskii and Landis）而得名</span>
-<span id='3.14'>RedBlackTree		红黑树 - 通过为节点着色并且为色彩赋予一定的规则来实现平衡</span>
-<span id='3.15'>BTree				B树 - 又称为Balanced Tree，一棵多路搜索树，用途很广，几乎是所有数据库的默认索引结构</span>
+<span id="3.12">BinarySearchTree 	二叉查找树</span>
+<span id="3.13">BalancedBinaryTree 	平衡二叉树 - 又称为AVL树，因其作者（Adelson-Velskii and Landis）而得名</span>
+<span id="3.14">RedBlackTree		红黑树 - 通过为节点着色并且为色彩赋予一定的规则来实现平衡</span>
+<span id="3.15">BTree				B树 - 又称为Balanced Tree，一棵多路搜索树，用途很广，几乎是所有数据库的默认索引结构</span>
