@@ -22,7 +22,7 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 ## 目录
 
 ### [排序](#1)
-- [x] [冒泡排序](#1.1)
+- [x] [冒泡排序](#BubbleSort)
 - [x] [直接插入排序](#1.2)
 - [x] [希尔排序](#1.3)
 - [x] [二分查找插入排序](#1.4)
@@ -62,7 +62,7 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 
 <span id="1">Sort-排序</span>  
 
-<span id="1.1">BubbleSort 冒泡排序</span>  
+<span id="BubbleSort">BubbleSort 冒泡排序</span>  
 <span id="1.2">InsertSort - Direct Insert Sort 插入排序(直接插入排序)</span>  
 <span id="1.3">ShellSort 希尔排序</span>  
 <span id="1.4">BinInsertSort 二分查找插入排序</span>  
