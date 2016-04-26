@@ -62,35 +62,35 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 
 ## Sort - 排序
 
-#### BubbleSort 冒泡排序
-#### InsertSort - Direct Insert Sort 插入排序(直接插入排序)
-#### ShellSort 希尔排序
-#### BinInsertSort 二分查找插入排序
+##### BubbleSort 冒泡排序
+##### InsertSort - Direct Insert Sort 插入排序(直接插入排序)
+##### ShellSort 希尔排序
+##### BinInsertSort 二分查找插入排序
 
-> 直接插入排序对于大部分有序的序列排序时速度快。<br/>
-> 二分插入排序在直接插入的基本上改变了查找元素插入位置的方法，对于完全无序的序列来说，速度会变快，但是对开大部分有序的序列反而会更慢。<br/>
-> 希尔排序则利用直接插入排序对于大部分有序的序列速度快的特点，先让大部分序列有序，以此来提高排序效率。<br/>
+- 直接插入排序对于大部分有序的序列排序时速度快。<br/>
+- 二分插入排序在直接插入的基本上改变了查找元素插入位置的方法，对于完全无序的序列来说，速度会变快，但是对开大部分有序的序列反而会更慢。<br/>
+- 希尔排序则利用直接插入排序对于大部分有序的序列速度快的特点，先让大部分序列有序，以此来提高排序效率。<br/>
 
-#### SelectSort 选择排序
-#### QuickSort 快速排序
-#### MergeSort 归并排序
+##### SelectSort 选择排序
+##### QuickSort 快速排序
+##### MergeSort 归并排序
 
 ## Search - 查找
 
-#### BinarySearch 二分查找
+##### BinarySearch 二分查找
 
 ## data_structure - 数据结构
 
-#### SingleLinkedList 单向链表
-#### DoubleLinkedList 双向链表 
-#### SingleCircularLinkedList 单向循环链表  
-#### DoubleCircularLinkedList 双向循环链表
-#### StackByArr 通过数组实现的栈
-#### StackByDoubleLinkedList 通过双向链表实现的栈
-#### Queue 通过双向链表实现的队列
-#### PriorityQueue 通过双向链表实现的优先级队列
-#### PriorityQueue 通过堆表实现的优先级队列
-#### HashTable 哈希表
+##### SingleLinkedList 单向链表
+##### DoubleLinkedList 双向链表 
+##### SingleCircularLinkedList 单向循环链表  
+##### DoubleCircularLinkedList 双向循环链表
+##### StackByArr 通过数组实现的栈
+##### StackByDoubleLinkedList 通过双向链表实现的栈
+##### Queue 通过双向链表实现的队列
+##### PriorityQueue 通过双向链表实现的优先级队列
+##### PriorityQueue 通过堆表实现的优先级队列
+##### HashTable 哈希表
 
 > 哈希表的主要问题在于设计好的哈希函数(可以得到均匀分布的key)和如何处理哈希冲突(hash collision)
 
@@ -114,7 +114,7 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 
 ## Tree - 树
 
-#### BinarySearchTree 		二叉查找树
-#### BalancedBinaryTree 	平衡二叉树 - 又称为AVL树，因其作者（Adelson-Velskii and Landis）而得名
-#### RedBlackTree			红黑树 - 通过为节点着色并且为色彩赋予一定的规则来实现平衡
-#### BTree					B树 - 又称为Balanced Tree，一棵多路搜索树，用途很广，几乎是所有数据库的默认索引结构
+##### BinarySearchTree 		二叉查找树
+##### BalancedBinaryTree 	平衡二叉树 - 又称为AVL树，因其作者（Adelson-Velskii and Landis）而得名
+##### RedBlackTree			红黑树 - 通过为节点着色并且为色彩赋予一定的规则来实现平衡
+##### BTree					B树 - 又称为Balanced Tree，一棵多路搜索树，用途很广，几乎是所有数据库的默认索引结构
