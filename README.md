@@ -62,7 +62,7 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 
 > 进入各个目录执行make即可编译文件，之后运行文件即可
 
-####Sort - 排序  
+<span id="Sort">Sort - 排序</span>  
 
 <span id="1.1">BubbleSort 冒泡排序</span>  
 <span id="1.2">InsertSort - Direct Insert Sort 插入排序(直接插入排序)</span>  
