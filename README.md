@@ -21,8 +21,8 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 
 ## 目录
 
-### [排序](#1)
-- [x] [冒泡排序](#BubbleSort)
+### [排序](#Sort)
+- [x] [冒泡排序](#1.1)
 - [x] [直接插入排序](#1.2)
 - [x] [希尔排序](#1.3)
 - [x] [二分查找插入排序](#1.4)
@@ -31,10 +31,10 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 - [x] [归并排序](#1.7)
 - [ ] [堆排序](#1.8)
 
-### [查找](#2)
+### [查找](#Search)
 - [x] [二分查找](#2.1)
 
-### [数据结构](#3)
+### [数据结构](#data_structure)
 - [x] [单向链表](#3.1)
 - [x] [双向链表](#3.2)
 - [x] [单向循环链表](#3.3)
@@ -46,6 +46,8 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 - [ ] [优先级队列 - 使用堆实现](#3.9)
 - [x] [哈希表 - 使用拉链法处理哈希冲突的实现](#3.10)
 - [ ] [堆](#3.11)
+
+### [Tree - 树](#Tree)
 - [x] [树 - 二叉查找树(BST)](#3.12)
 - [x] [树 - 平衡二叉树(AVL)](#3.13)
 - [x] [树 - 红黑树(RBT)](#3.14)
@@ -60,9 +62,9 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 
 > 进入各个目录执行make即可编译文件，之后运行文件即可
 
-<span id="1">Sort-排序</span>  
+####Sort - 排序  
 
-<span id="BubbleSort">BubbleSort 冒泡排序</span>  
+<span id="1.1">BubbleSort 冒泡排序</span>  
 <span id="1.2">InsertSort - Direct Insert Sort 插入排序(直接插入排序)</span>  
 <span id="1.3">ShellSort 希尔排序</span>  
 <span id="1.4">BinInsertSort 二分查找插入排序</span>  
@@ -75,11 +77,12 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 <span id="1.6">QuickSort 快速排序</span>  
 <span id="1.7">MergeSort 归并排序</span>  
 
-<span id="2">Search-查找</span>  
+####Search - 查找   
+<span id="查找">Search-查找</span>  
 
 <span id="2.1">BinarySearch 二分查找</span>  
 
-<span id="3">data_structure 数据结构</span>  
+####data_structure - 数据结构   
 
 <span id="3.1">SingleLinkedList 单向链表</span>  
 <span id="3.2">DoubleLinkedList 双向链表</span>  
@@ -112,7 +115,7 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 
 	3. 拉链法（是解决哈希冲突的最常用方法），在发生冲突的槽中使用链表存放冲突元素，也就是使用链表数组来解决冲突
 
-<span>Tree - 树</span>  
+####Tree - 树  
 <span id="3.12">BinarySearchTree 	二叉查找树</span>  
 <span id="3.13">BalancedBinaryTree 	平衡二叉树 - 又称为AVL树，因其作者（Adelson-Velskii and Landis）而得名</span>  
 <span id="3.14">RedBlackTree		红黑树 - 通过为节点着色并且为色彩赋予一定的规则来实现平衡</span>  
