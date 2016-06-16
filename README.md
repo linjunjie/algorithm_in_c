@@ -55,6 +55,7 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 - [ ] [树 - Trie树](#3.18)
 - [ ] [树 - SB树 - Size Balanced Tree](#3.19)
 - [ ] [树 - Merkle Tree - Dynamo中用来同步数据一致性的算法](#3.20)
+- [ ] [树 - LSM Tree - Log-Structured Merge-Trees](#3.21)
 
 ## 使用方法:
 
@@ -89,7 +90,7 @@ C语言的数据结构和算法实现 - 代码中几乎每一行都添加了注�
 ##### StackByDoubleLinkedList 通过双向链表实现的栈
 ##### Queue 通过双向链表实现的队列
 ##### PriorityQueue 通过双向链表实现的优先级队列
-##### PriorityQueue 通过堆表实现的优先级队列
+##### PriorityQueue 通过堆实现的优先级队列
 ##### HashTable 哈希表
 
 - 哈希表的主要问题在于设计好的哈希函数(可以得到均匀分布的key)和如何处理哈希冲突(hash collision)

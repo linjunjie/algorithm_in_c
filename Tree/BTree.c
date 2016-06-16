@@ -14,7 +14,7 @@
  *	如果你能根据上面的定义明白B树到底是什么，那真是万幸！你很可能天赋秉异！
  *	但是如果你看完之后还是搞不懂B树到底是什么，那我更能理解你（因为我也看不懂），因为网上到处都是这种脱离人类语言，晦涩难懂又绕来绕去的学术定义，一般人根本搞不懂，所以我们一步一步来解释清楚：
  *
- *	首先我们要搞清楚，B树阶的定义是不统一的（看见了吧，不是我们糊涂，而是本身B树的定义都不同，所以你可能一会儿看到这种定义，一会儿看到另一重定义，不糊涂才怪呢），看下面：
+ *	首先我们要搞清楚，B树阶的定义是不统一的（看见了吧，不是我们糊涂，而是本身B树的定义都不同，所以你可能一会儿看到这种定义，一会儿看到另一种定义，不糊涂才怪呢），看下面：
  *	Unfortunately, the literature on B-trees is not uniform in its terminology (Folk & Zoellick 1992, p. 362). 
  *	Bayer & McCreight (1972), Comer (1979), and others define the order of B-tree as the minimum number of keys in a non-root node. 
  *	Folk & Zoellick (1992) points out that terminology is ambiguous because the maximum number of keys is not clear. An order 3 B-tree might hold a maximum of 6 keys or a maximum of 7 keys. 
@@ -80,191 +80,24 @@
 #define false 0
 
 typedef struct btree_node{
-	int keynum;
+	int keynum;		//顾名思义，保存的数据的数量，也就是key的数量
 	int isleaf;
 	struct btree_node * parent;
-	int keys[2*T - 1];
-	struct btree_node * children[2*T];
+	int keys[2*T - 1];	//保存的数据域
+	struct btree_node * children[2*T];	//保存的孩子节点
 } bnode;
 
 bnode * bt_root;
 
-
-//网上例程，在进行带有子节点的根节点分裂的时候有问题，这里当标本放这里了，大家可以排查此问题来练手
-bnode * find_node_in_btree(bnode * current, int data, int index);
-void split_node_in_btree(bnode * split_node_parent, int index);
-void insert_node_to_nonfull_btree(bnode * nonfull, int data);
-void insert_node_to_btree(bnode * * root, int data);
-void print_btree(bnode * root);
 void init_btree();
-
-
-//打印类函数
 void print_btree(bnode * root);
+void insert_nonfull(bnode * node, int data);
+void split_node(bnode * split_node_parent, int index);
+void insert(bnode * * root, int data);
 
 void init_btree()
 {
 	bt_root = NULL;
-}
-
-bnode * find_node_in_btree(bnode * current, int data, int index)
-{
-	int i = 0;
-	while(i <= current -> keynum && data > current -> keys[i])
-	{
-		i++;
-	}
-
-	if(i < current -> keynum && data == current -> keys[i])
-	{
-		index = i;
-		return current;
-	}
-	if(current -> isleaf)
-	{
-		return NULL;
-	}
-	return find_node_in_btree(current -> children[i], data, index);	
-}
-
-void split_node_in_btree(bnode * split_node_parent, int index)
-{
-	bnode * new_node = (bnode *)malloc(sizeof(bnode));
-	new_node -> isleaf = true;
-	new_node -> parent = NULL;
-	for(int i=0; i < 2*T; i++)
-	{
-		new_node -> children[i] = NULL;
-	}
-	new_node -> keynum = T - 1;
-	for(int i=0; i < T - 1; i++)
-	{
-		new_node -> keys[i] = split_node_parent -> children[index] -> keys[T+i];
-	}
-
-	split_node_parent -> children[index] -> keynum = T - 1;
-
-	if(split_node_parent -> children[index] -> isleaf == false)
-	{
-		new_node -> isleaf = false;
-		for(int i=0; i < T - 1; i++)
-		{
-			new_node -> children[i] = split_node_parent -> children[T+i];
-		}
-	}
-
-	for(int i = split_node_parent -> keynum; i >= index; i--)
-	{
-		split_node_parent -> children[i+1] = split_node_parent -> children[i];
-	}
-	(split_node_parent -> keynum)++;
-
-	split_node_parent -> children[index+1] = new_node;
-
-	for(int i = (split_node_parent -> keynum - 1); i >= index; i--)
-	{
-		split_node_parent -> keys[i+1] = split_node_parent -> keys[i];
-	}
-
-	split_node_parent -> keys[index] = split_node_parent -> children[index] -> keys[T-1];
-}
-
-void insert_node_to_nonfull_btree(bnode * nonfull, int data)
-{
-	//还能插入的空位数
-	int i = nonfull -> keynum - 1;
-
-	//如果是叶节点则直接插入
-	if(nonfull -> isleaf == true)
-	{
-		//将所有小于插入元素的节点元素都向右移动
-		while( i >= 0 && data < nonfull -> keys[i])
-		{
-			nonfull -> keys[i+1] = nonfull -> keys[i];
-			--i;
-		}
-
-		//节点数+1
-		(nonfull -> keynum)++;
-		
-		//将插入元素放入合适的位置
-		nonfull -> keys[i+1] = data;
-	}
-	else
-	{
-		//寻找要插入节点的位置
-		while( i >= 0 && data < nonfull -> keys[i] )
-		{
-			--i;
-		}
-
-		//回位
-		i++;
-
-		//如果子树已经满了
-		if(nonfull -> children[i] -> keynum >= 2*T - 1)
-		{
-			split_node_in_btree(nonfull, i);
-			if(data > nonfull -> keys[i])
-			{
-				i++;
-			}
-		}
-
-		//递归向下寻找
-		insert_node_to_nonfull_btree(nonfull -> children[i], data);
-	}
-}
-
-void insert_node_to_btree(bnode * * root, int data)
-{
-	if((* root) == NULL)
-	{
-		bnode * tmp = (bnode *)malloc(sizeof(bnode));
-		if(tmp == NULL)
-		{
-			return;
-		}
-		tmp -> keynum = 1;
-		tmp -> isleaf = true;
-		tmp -> parent = NULL;
-		for(int i=0; i < 2*T - 1; i++)
-		{
-			tmp -> keys[i] = 0;
-		}
-		for(int i=0; i < 2*T; i++)
-		{
-			tmp -> children[i] = NULL;
-		}
-
-		tmp -> keys[0] = data;
-		*root = tmp;
-		return;
-	}
-
-	//如果根节点已经满了
-	if((* root) -> keynum >= 2*T - 1)
-	{
-		//如果根节点已满，则根节点需要分裂，需要产生一个新节点，并且将当前根节点设置为新节点指向的一个孩子
-		bnode * node = (bnode *)malloc(sizeof(bnode));
-		node -> keynum = 0;
-		node -> isleaf = false;
-		node -> parent = NULL;
-		node -> children[0] = *root;
-		*root = node;
-
-		//node的第0个子节点需要分裂
-		split_node_in_btree(node, 0);
-
-		//再插入未满节点
-		insert_node_to_nonfull_btree(node, data);
-
-	}
-	//如果根节点未满，则直接调用insert_node_to_nonfull_btree插入未满节点
-	else
-	{
-		insert_node_to_nonfull_btree(*root, data);
-	}
 }
 
 void print_btree(bnode * root)
@@ -274,7 +107,7 @@ void print_btree(bnode * root)
 		return;
 	}
 
-	printf("%d\n", root -> isleaf);
+	printf("%d", root -> isleaf);
 
 	//打印根节点
 	printf("[");
@@ -286,7 +119,7 @@ void print_btree(bnode * root)
 			printf(" ");
 		}
 	}
-	printf("]");
+	printf("]\n");
 
 	//打印子节点
 	for(int i = 0; i <= root -> keynum; i++)
@@ -294,12 +127,6 @@ void print_btree(bnode * root)
 		print_btree(root -> children[i]);
 	}
 }
-
-//by junjie
-void split_node(bnode * split_node_parent, int index);
-void insert_nonfull(bnode * node, int data);
-void split_node(bnode * split_node_parent, int index);
-void insert(bnode * * root, int data);
 
 //插入到一个非空节点
 void insert_nonfull(bnode * node, int data)
@@ -357,7 +184,7 @@ void insert_nonfull(bnode * node, int data)
 	}
 }
 
-//其实这里分裂的是待分裂节点的父节点
+//这里分裂的其实是待分裂节点的父节点
 void split_node(bnode * split_node_parent, int index)
 {
 	//开辟一个新节点保存被实际分裂节点右边的节点
@@ -410,7 +237,7 @@ void split_node(bnode * split_node_parent, int index)
 	//拿到父节点现在的数组最大索引值
 	int i = split_node_parent -> keynum - 1;
 
-	//如果比提上来的节点小，则全部往后移，反正就是给移上来的节点腾地方
+	//如果比提上来的节点小，则全部往后移，反正就是给移上来的节点腾出合适的地方
 	while(i >= index){
 		split_node_parent -> keys[ i + 1 ] = split_node_parent -> keys[ i ];
 		i--;
@@ -460,7 +287,7 @@ void insert(bnode * * root, int data)
 		}
 		tmp -> children[0] = *root;
 
-		//分裂这个指向根节点的新节点
+		//分裂这个子节点所指向当前根节点的新节点
 		split_node(tmp, 0);
 
 		//将分裂后的节点设置为根节点
@@ -476,7 +303,7 @@ void insert(bnode * * root, int data)
 }
 
 int main(int argc, char * argv[]){
-	int data[] = {8,5,3,1,10,2,7,9,4,6,11,12};
+	int data[] = {20,8,5,3,1,10,2,7,9,4,6,11,12,15};
 	// int data[] = {8,5,3,1,10,2,7,9,4};
 	int len;
 	GET_ARRAY_LEN(data, len);
@@ -485,14 +312,10 @@ int main(int argc, char * argv[]){
 
 	for (int i = 0; i < len; i++)
 	{
-		//网上有问题的例程，其实原因已经知道了，大家还是可以来看看如何解决
-		// insert_node_to_btree(&bt_root, data[i]);
-
-		//by me
 		insert(&bt_root, data[i]);
 	}
-
+	
 	print_btree(bt_root);
-
+	
 	return 1;
 }
