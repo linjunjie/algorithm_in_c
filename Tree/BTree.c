@@ -64,7 +64,19 @@
  *		8.正确处理好（或者说分配好）被分裂节点的孩子节点之后，我们就可以插入最后一个元素6了。
  *
  *	当处理完最后根节点的分裂，并且插入节点6并调试成功之后，正好18:00整~~~，哇...呵呵，可以下班了~~
- *	
+ *
+ *
+ *	****************************************** 2016-06-22 ******************************************
+ *  编写B树的删除，猜猜花费了多长时间？一天？两天？一个周？
+ *  都不对，实际是，花费了整整两个周！！！
+ *  编写B树的删除逻辑，其中涉及到了节点的合并，与添加节点时的分裂相呼应，但是这个合并的逻辑，我整整花费了两个星期的时间......所以又再一次证明了我不是一个聪明的人
+ *  但是也想通过这个事情说明，哪怕像我这么笨的人，通过两个星期的时间，也可以实现B树的删除，所以，没有什么算法是不能实现的，只要你肯去做。
+ *  这次合并的逻辑，并不完善，其中可能有一些地方可以使用分裂之后再合并的方法可能更好，但是我没有去实现；
+ *  按层级打印B树的功能也没有实现好，目前只是通过加入了一个右兄弟指针的方法来实现的，属于投机取巧的方法（而且还有bug）；
+ *  另外这里为了实现一个B树，竟然用了七八百行代码，说明肯定有冗余的部分，
+ *  所有这些问题以后有时间有机会一定要继续优化~~~
+ *  
+ * 
  *	@Description: 	Description
  *	@Datetime: 		2016-04-20 17:33:30
  *	@Author: 		linjunjie
@@ -73,59 +85,42 @@
 #include "algorithm.h"
 
 //4阶树，也就是2-3-4树，最简单的B树是2-3树，也即3阶树
-#define BTREE_M 4
+#define BTREE_M 4 	//四阶树，也就是有四个子孩子，三个元素的B树
 #define T BTREE_M/2 	//方便编程，有的地方也称为度，什么出度，入度，大家可以自己去搜索是什么意思
 
 #define true 1
 #define false 0
+#define null NULL
 
 typedef struct btree_node{
 	int keynum;		//顾名思义，保存的数据的数量，也就是key的数量
 	int isleaf;
-	struct btree_node * parent;
 	int keys[2*T - 1];	//保存的数据域
 	struct btree_node * children[2*T];	//保存的孩子节点
+	struct btree_node * right_sibling;
+	struct btree_node * parent;	//父节点
+	int p_pos;	//当前节点在父节点的位置
 } bnode;
 
 bnode * bt_root;
 
 void init_btree();
 void print_btree(bnode * root);
+void hierarchy_traversal(bnode * node);
+void hierarchy_traversal_recurse(bnode * root, int level);
 void insert_nonfull(bnode * node, int data);
 void split_node(bnode * split_node_parent, int index);
-void insert(bnode * * root, int data);
+void insert(bnode * * root, int key);
+void remove_key(bnode * * root, int key);
+bnode * find(bnode * root, int key, int * pos);
+bnode * find_max(bnode * root, int * pos, int * key);
+bnode * find_min(bnode * root, int * pos, int * key);
+void merge_sibling(bnode * theone);
+void merge_sibling_recursive(bnode * theone);
 
 void init_btree()
 {
 	bt_root = NULL;
-}
-
-void print_btree(bnode * root)
-{
-	if(root == NULL)
-	{
-		return;
-	}
-
-	printf("%d", root -> isleaf);
-
-	//打印根节点
-	printf("[");
-	for(int i = 0; i < root -> keynum; i++)
-	{
-		printf("%d", root -> keys[i]);
-		if(root -> keynum - 1 != i)
-		{
-			printf(" ");
-		}
-	}
-	printf("]\n");
-
-	//打印子节点
-	for(int i = 0; i <= root -> keynum; i++)
-	{
-		print_btree(root -> children[i]);
-	}
 }
 
 //插入到一个非空节点
@@ -200,7 +195,7 @@ void split_node(bnode * split_node_parent, int index)
 		right_node -> children[i] = NULL;
 	}
 
-	//把右边的节点赋值给right_node
+	//把当前节点右半边的节点赋值给right_node
 	for(int i=T,j=0; i < 2*T - 1; i++, j++)
 	{
 		//把被分裂节点右边的值全部赋值给right_node
@@ -212,15 +207,16 @@ void split_node(bnode * split_node_parent, int index)
 		split_node_parent -> children[index] -> keynum --;
 	}
 
-	//把右边的孩子也赋值给right_node
+	//把右半边的孩子也赋值给right_node
 	for(int i=T,j=0; i < 2*T; i++,j++)
 	{
 		right_node -> children[j] = split_node_parent -> children[index] -> children[i];
 		split_node_parent -> children[index] -> children[i] = NULL;
 	}
 
-	//把右边的值赋给父节点的右孩子
-	int m = split_node_parent -> keynum;	//所有孩子数
+	//把右半边的元素数赋给父节点的右孩子
+	int m = split_node_parent -> keynum;
+
 	//所有孩子也右移，是为了容纳分裂之后产生的新的右孩子
 	while(m >= index + 1)
 	{
@@ -237,7 +233,7 @@ void split_node(bnode * split_node_parent, int index)
 	//拿到父节点现在的数组最大索引值
 	int i = split_node_parent -> keynum - 1;
 
-	//如果比提上来的节点小，则全部往后移，反正就是给移上来的节点腾出合适的地方
+	//如果比提上来的节点小，则全部往后移，目的是给移上来的节点腾出合适的地方
 	while(i >= index){
 		split_node_parent -> keys[ i + 1 ] = split_node_parent -> keys[ i ];
 		i--;
@@ -247,9 +243,27 @@ void split_node(bnode * split_node_parent, int index)
 	split_node_parent -> keys[ i ] = mid_key;
 	split_node_parent -> children[index] -> keynum --;
 	split_node_parent -> keynum ++;
+
+	//更新一些指针和节点信息
+	for (int i = 0; i < split_node_parent -> keynum; i++)
+	{
+		//最后这个是建立起节点之间右兄弟节点的联系（用来日后层级遍历B树）
+		split_node_parent -> children[i] -> right_sibling = split_node_parent -> children[i+1];
+	}
+
+	//注意这里处理子节点的数目应该是keynum
+	for (int i = 0; i <= split_node_parent -> keynum; i++)
+	{
+		//各个子节点指向父节点
+		split_node_parent -> children[i] -> parent = split_node_parent;
+
+		//子节点在父节点的位置
+		split_node_parent -> children[i] -> p_pos = i;
+	}
+
 }
 
-void insert(bnode * * root, int data)
+void insert(bnode * * root, int key)
 {
 	//根节点为空，则直接放入根节点
 	if(*root == NULL)
@@ -266,7 +280,7 @@ void insert(bnode * * root, int data)
 		{
 			new_root -> children[i] = NULL;
 		}
-		new_root -> keys[0] = data;
+		new_root -> keys[0] = key;
 		*root = new_root;
 		return;
 	}
@@ -293,29 +307,554 @@ void insert(bnode * * root, int data)
 		//将分裂后的节点设置为根节点
 		*root = tmp;
 
-		insert_nonfull(*root, data);
+		insert_nonfull(*root, key);
 	}
 	else
 	{
-		insert_nonfull(*root, data);
+		insert_nonfull(*root, key);
+	}
+}
+
+/**
+ * 合并兄弟节点
+ * 
+ * 当对接点进行了变更之后，则调用此方法判断节点是否可以进行合并
+ */
+void merge_sibling(bnode * theone)
+{
+	if( theone -> keynum <= T - 1)
+	{
+		bnode * parent = theone -> parent;
+
+		int sibling_pos = abs(theone -> p_pos - 1);	//需要待合并的节点位置
+
+		if(sibling_pos > theone -> p_pos)	//如果兄弟节点在当前节点右边，则直接使用当前节点合并
+		{
+			merge_sibling_recursive(theone);
+		}
+		else	//如果兄弟节点在当前节点左边，则使用兄弟节点进行合并
+		{
+			merge_sibling_recursive(parent -> children[ sibling_pos ]);
+		}
+	}
+}
+
+/**
+ * 递归合并节点
+ *
+ * 这里进来的元素，在merge_sibling方法已经被矫正过一次，所以进来的节点都是左子节点，
+ * 哪怕本来这个节点是右边的节点需要合并，现在也变成了左边的节点，
+ * 就像下面这样
+ *
+ *                父节点
+ * 当前节点   <-------------  右子节点
+ */
+void merge_sibling_recursive(bnode * theone)
+{
+	if( theone -> keynum <= T - 1)
+	{
+		bnode * parent = theone -> parent;
+
+		int sibling_pos = theone -> p_pos + 1;
+
+		if(parent -> children[ sibling_pos ] -> keynum <= T - 1)	//如果待合并的节点的兄弟节点确实满足合并的条件
+		{
+			//父节点元素下移
+			theone -> keys[ theone -> keynum ] = parent -> keys[ theone -> p_pos ];
+			theone -> keynum ++;
+
+			//把兄弟节点的孩子也赋值给theone
+			int j = 0;
+			while( j < parent -> children[ sibling_pos ] -> keynum )
+			{
+				theone -> keys[ theone -> keynum + j ] = parent -> children[ sibling_pos ] -> keys[ j ];
+				theone -> children[ theone -> keynum + j ] = parent -> children[ sibling_pos ] -> children[ j ];
+				
+				if(theone -> children[ theone -> keynum + j ] != NULL)
+				{	
+					theone -> children[ theone -> keynum + j ] -> parent = theone;
+					theone -> children[ theone -> keynum + j ] -> p_pos = theone -> keynum + j;
+				}
+				j++;
+			}
+			//这里处理最后一个节点孩子
+			theone -> children[ theone -> keynum + j ] = parent -> children[ sibling_pos ] -> children[ j ];
+			if(theone -> children[ theone -> keynum + j ] != NULL)
+			{
+				theone -> children[ theone -> keynum + j ] -> parent = theone;
+				theone -> children[ theone -> keynum + j ] -> p_pos = theone -> keynum + j;
+			}
+			theone -> keynum += j;
+
+			//父节点下移之后，也要调整父节点相应关键字和子节点的位置，也就是向左移动
+			int k = theone -> p_pos;
+			while( k < parent -> keynum )
+			{
+				parent -> keys[ k ] = parent -> keys[ k + 1 ];
+				parent -> children[ k + 1 ] = parent -> children[ k + 2 ];
+				if(parent -> children[ k + 1 ] != NULL)
+				{
+					parent -> children[ k + 1 ] -> p_pos = k + 1;
+				}
+				k++;
+			}
+			parent -> children[ k + 1 ] = parent -> children[ k + 2 ];
+			if(parent -> children[ k + 1 ] != NULL)
+			{
+				parent -> children[ k + 1 ] -> p_pos = k + 1;
+			}
+
+			//调整完父节点之后，将父节点的关键字数目减1
+			parent -> keynum --;
+
+			if(parent -> keynum > 0)
+			{
+				//建立右兄弟的关系
+				parent -> children[ theone -> p_pos ] -> right_sibling = parent -> children[ theone -> p_pos + 1 ];
+			}
+
+			//如果不是父节点（父节点需要特殊处理）
+			if(parent != bt_root)
+			{
+				int parent_sibling_pos = abs(parent -> p_pos - 1);	//需要待合并的节点位置
+				if(parent_sibling_pos > parent -> p_pos)	//如果兄弟节点在当前节点右边，则直接使用当前节点合并
+				{
+					merge_sibling_recursive(parent);
+				}
+				else	//如果兄弟节点在当前节点左边，则使用兄弟节点进行合并
+				{
+					merge_sibling_recursive(parent -> parent -> children[ parent_sibling_pos ]);
+				}
+			}
+			else
+			{
+				//如果父节点元素已经为空，则销毁父节点，并重新建立父节点
+				if(parent -> keynum == 0)
+				{
+					free(parent);
+					bt_root = theone;
+					bt_root -> right_sibling = null;
+				}
+			}
+		}
+		else
+		{
+			//如果兄弟节点为空的话
+			if( theone -> keynum == 0 )
+			{
+
+				//父节点下移到左子节点
+				theone -> keys[0] = parent -> keys[ theone -> p_pos ];
+				theone -> keynum = 1;
+
+				//右子节点最左边关键字上移到父节点
+				parent -> keys[ theone -> p_pos ] = parent -> children[ sibling_pos ] -> keys[ 0 ];
+				int j = 0;
+				while( j < parent -> children[ sibling_pos ] -> keynum - 1 )
+				{
+					parent -> children[ sibling_pos ] -> keys[ j ] = parent -> children[ sibling_pos ] -> keys[ j + 1 ];
+					j ++;
+				}
+
+				//右子节点关键字数目减一
+				parent -> children[ sibling_pos ] -> keynum --;
+
+				//递归继续查看节点是否满足合并条件
+				merge_sibling_recursive(theone);
+			}
+		}
+	}
+	//如果当前节点满足B树的特性，那么则判断其兄弟节点是否不满足B树特性，如果不满足则可以进行合并
+	else
+	{
+		bnode * parent = theone -> parent;
+		int sibling_pos = theone -> p_pos + 1;
+
+		//如果兄弟节点为空的话
+		if( parent -> children[ sibling_pos ] -> keynum <= T - 1 )
+		{
+			//父节点下移到右子节点的最左边
+			//首先所有孩子往右移
+			int j = parent -> children[ sibling_pos ] -> keynum;
+			while(j > 0)
+			{
+				parent -> children[ sibling_pos ] -> keys[ j ] = parent -> children[ sibling_pos ] -> keys[ j - 1 ];
+				j --;
+			}
+			parent -> children[ sibling_pos ] -> keys[ 0 ] = parent -> keys[ theone -> p_pos ];
+			parent -> children[ sibling_pos ] -> keynum += 1;
+
+			//左子节点最右边关键字上移到父节点
+			parent -> keys[ theone -> p_pos ] = theone -> keys[ theone -> keynum - 1 ];
+
+			//左子节点关键字数目减一
+			theone -> keynum --;
+
+			//继续递归判断
+			merge_sibling_recursive(theone);
+
+		}
+	}
+}
+
+/**
+ *
+ * 删除B树种的关键字
+ *
+ * 
+ * B树的特性：
+ * 
+ * 除根节点之外的节点必须满足：
+ * ceil(m/2) - 1 <= n <= m-1
+ * n表示关键字个数
+ * 
+ * 对于四阶树来说，也就是关键字满足：
+ * 1 <= n <= 3
+ *
+ */
+void remove_key(bnode * * root, int key)
+{
+	if(root == null)
+	{
+		return;
+	}
+
+	bnode * node = * root;
+	int pos = -1;
+
+	bnode * theone = find(node, key, &pos);
+
+	if(theone == NULL)
+	{
+		return;
+	}
+	else
+	{
+		//如果节点是叶节点，则直接删除元素
+		if(theone -> isleaf == true)
+		{
+			//则将此元素后面的元素向前移来删除此元素
+			int i = pos;
+			while(i < theone -> keynum)
+			{
+				theone -> keys[i] = theone -> keys[i + 1];
+				i++;
+			}
+
+			//节点元素数减1
+			theone -> keynum --;
+
+			//判断当前节点在删除关键字后还是否满足B树的节点关键字特性
+			merge_sibling(theone);
+		}
+		/**
+		 * 如果被删除的不是叶子节点，则有三种情况：
+		 * 1.左边能借
+		 * 2.右边能借
+		 * 3.左右都不能借
+		 */
+		else
+		{
+			//如果节点左孩子满足富余节点的特性
+			if( theone -> children[pos] -> keynum > T - 1 )
+			{
+				// printf("%s\n", "left");
+				int pos_left_max, key_left_max= -1;
+				bnode * findnode = find_max( theone -> children[pos], &pos_left_max, &key_left_max);
+				if(findnode != null)
+				{
+					remove_key(&findnode, key_left_max);
+				}
+				theone -> keys[pos] = key_left_max;
+			}
+			//如果节点右孩子满足富余节点的特性
+			else if(theone -> children[pos+1] -> keynum > T - 1 )
+			{
+				// printf("%s\n", "right");
+				int pos_right_min,key_right_min= -1;
+				bnode * findnode = find_min( theone -> children[pos+1], &pos_right_min, &key_right_min);
+				if(findnode != null)
+				{
+					remove_key(&findnode, key_right_min);
+				}
+				theone -> keys[pos] = key_right_min;
+			}
+			//如果左右子节点关键字都不够用，那么需要先把左子节点，当前节点，右子节点进行合并
+			else if(
+				theone -> children[pos] -> keynum ==  T - 1
+				&& 
+				theone -> children[pos+1] -> keynum == T - 1)
+			{
+				// printf("%s\n", "mid");
+				//父节点下移到左子节点
+				theone -> children[ pos ] -> keys[ theone -> children[ pos ] -> keynum ] = theone -> keys[ pos ];
+				theone -> children[ pos ] -> keynum ++;
+
+				//右子节点关键字并入左子节点
+				int i = 0;
+				while( i < theone -> children[ pos + 1 ] -> keynum)
+				{
+					theone -> children[ pos ] -> keys[ theone -> children[ pos ] -> keynum + i ] = theone -> children[ pos + 1] -> keys[ i ];
+					theone -> children[ pos ] -> children[ theone -> children[ pos ] -> keynum + i ] = theone -> children[ pos + 1] -> children[ i ];
+					theone -> children[ pos ] -> children[ theone -> children[ pos ] -> keynum + i ] -> p_pos = theone -> children[ pos ] -> keynum + i;
+					theone -> children[ pos ] -> keynum ++;
+					i++;
+				}
+				//不要忘了处理最后一个孩子
+				theone -> children[ pos ] -> children[ theone -> children[ pos ] -> keynum + i ] = theone -> children[ pos + 1] -> children[ i ];
+				theone -> children[ pos ] -> children[ theone -> children[ pos ] -> keynum + i ] -> p_pos = theone -> children[ pos ] -> keynum + i;
+				theone -> children[ pos ] -> keynum ++;
+
+				//父节点全部孩子左移
+				int j = pos;
+				while(j < theone -> keynum)
+				{
+					theone -> keys[j] = theone -> keys[j + 1];
+					theone -> children[j + 1] = theone -> children[j + 2];
+					j++;
+				}
+				theone -> keynum --;
+
+				//不要忘记更新此节点指向的右兄弟节点（为了层级遍历）
+				theone -> children[ pos ] -> right_sibling = theone -> children[ pos + 1 ];
+
+				//在子节点中继续删除元素
+				remove_key( & (theone -> children[pos]), key );
+			}
+
+		}
+	}
+}
+
+/**
+ * 查找的基本思路是这样的:
+ *
+ * 1.元素在当前节点中寻找
+ * 2.如果元素大于节点中当前元素，则一直往后找
+ * 3.否则查看元素和当前元素是否相等，若相等则说明已经找到
+ * 4.否则查看当前元素中间是否存在子节点
+ * 5.在子节点中重复以上1~4步骤
+ */
+bnode * find(bnode * root, int key, int * pos)
+{
+	if(root == NULL)
+	{
+		return false;
+	}
+
+	bnode * tmp = root;
+	int i = 0;
+
+	//如果大于当前元素，则一直往后找
+	while ( i < tmp -> keynum && key > tmp -> keys[i] )
+	{
+		i++;
+	}
+
+	//若相等，则说明已经找到
+	if( i < tmp -> keynum && key == tmp -> keys[i])
+	{
+		* pos = i;
+		return tmp;
+	}
+
+	//如果当前元素是叶子节点，说明没找到
+	if( tmp -> isleaf )
+	{
+		return NULL;
+	}
+
+	//否则继续向深处寻找
+	return find( tmp -> children[i], key, pos);
+}
+
+//找到此节点所有子节点下的最大元素
+bnode * find_max(bnode * root, int * pos, int * key)
+{
+	if(root == null)
+	{
+		return false;
+	}
+
+	bnode * tmp = root;
+
+	if( tmp -> isleaf )
+	{
+		* pos = tmp -> keynum - 1;
+		* key = tmp -> keys[ tmp -> keynum - 1 ];
+		return tmp;
+	}
+	else
+	{
+		return find_max( tmp -> children[ tmp -> keynum ], pos , key);
 	}
 
 }
 
+//找到此节点所有子节点下的最小元素
+bnode * find_min(bnode * root, int * pos, int * key)
+{
+	if(root == null)
+	{
+		return false;
+	}
+
+	bnode * tmp = root;
+
+	if( tmp -> isleaf )
+	{
+		* pos = tmp -> keynum - 1;
+		* key = tmp -> keys[ 0 ];
+		return tmp;
+	}
+	else
+	{
+		return find_min( tmp -> children[ 0 ], pos , key);
+	}
+
+}
+
+//普通打印（打印包括节点信息）
+void print_btree(bnode * root)
+{
+	if(root == NULL)
+	{
+		return;
+	}
+
+	printf("节点元素:");
+	printf("是否叶子节点:%d", root -> isleaf);
+
+	//打印根节点
+	printf(";成员:[");
+	for(int i = 0; i < root -> keynum; i++)
+	{
+		printf("%d", root -> keys[i]);
+		if(root -> keynum - 1 != i)
+		{
+			printf(",");
+		}
+	}
+	printf("]");
+	printf(";在父节点的位置:%d", root -> p_pos);
+	printf(";key数量:%d\n", root -> keynum);
+
+	//打印子节点
+	for(int i = 0; i <= root -> keynum; i++)
+	{
+		print_btree(root -> children[i]);
+	}
+}
+
+//层级遍历打印B树
+void hierarchy_traversal(bnode * node)
+{
+	if(node -> keynum > 0)
+	{
+		bnode * right = node;
+		while(right != null)
+		{
+			printf("[");
+			for (int i = 0; i < right -> keynum; i++)
+			{
+				printf("%d", right -> keys[i]);
+				if(right -> keynum - 1 != i)
+				{
+					printf(",");
+				}
+			}
+			printf("],");
+
+			right = right -> right_sibling;
+		}
+	}
+	printf("\n");
+}
+
+//递归层级遍历打印B树
+void hierarchy_traversal_recurse(bnode * root, int level)
+{
+	printf("第%d层:", level);
+	if(root -> keynum > 0)
+	{
+		hierarchy_traversal(root);
+	}
+
+	if(root -> isleaf == false)
+	{
+		hierarchy_traversal_recurse(root -> children[0], ++level);
+	}
+}
+
 int main(int argc, char * argv[]){
-	int data[] = {20,8,5,3,1,10,2,7,9,4,6,11,12,15};
-	// int data[] = {8,5,3,1,10,2,7,9,4};
+	// int data[] = {20,8,5,3,1,10,2,7,9,4,6,18,11,12,15};
+	// int data[] = {20,8,5,3,1,10,2,7,9,4,6,18,11};
+	int data[] = {20,8,5,3,1,10,2,7,9,4,6,18};
 	int len;
 	GET_ARRAY_LEN(data, len);
 
 	init_btree();
 
+	//插入节点
 	for (int i = 0; i < len; i++)
 	{
 		insert(&bt_root, data[i]);
 	}
-	
+
+	//测试查找函数
+	// int pos = -1;
+	// bnode * want = find(bt_root, 9, &pos);
+	// if(pos != -1)
+	// {
+	//  printf("%d\n", want -> parent -> keys[0]);
+	// 	printf("pos :%d\n", pos);
+	// 	printf("p_pos :%d\n", want -> p_pos);
+	// }
+	// else
+	// {
+	// 	printf("%s\n","没找到元素");
+	// }
+
+	//层级打印B树
+	printf("层级打印：\n");
+	hierarchy_traversal_recurse(bt_root, 1);
+
+	printf("普通打印：\n");
 	print_btree(bt_root);
-	
+
+
+	//测试删除数据 示例 1
+	// remove_key( &bt_root, 7 );
+	// remove_key( &bt_root, 5 );
+	// remove_key( &bt_root, 4 );
+	// remove_key( &bt_root, 1 );
+	// remove_key( &bt_root, 2 );
+	// remove_key( &bt_root, 3 );
+	// remove_key( &bt_root, 18 );
+
+
+	//测试删除数据 示例 2
+	// remove_key( &bt_root, 20 );
+	// remove_key( &bt_root, 7 );
+
+
+	//测试find_max函数
+	// int pos,key = -1;
+	// bnode * want = find_max(bt_root -> children[2], &pos, &key);
+	// if(pos != -1)
+	// {
+	// 	printf("%d,%d\n",pos,want -> keys[pos]);
+	// }
+	// else
+	// {
+	// 	printf("%s\n","没找到元素");
+	// }
+
+	printf("层级打印：\n");
+	hierarchy_traversal_recurse(bt_root, 1);
+
+	printf("普通打印：\n");
+	print_btree(bt_root);
+
 	return 1;
 }
