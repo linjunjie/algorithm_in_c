@@ -15,7 +15,8 @@ COMMON_FLAGS = -Wall $(INCLUDES)
 all : BinarySearchTree \
 		BalancedBinaryTree \
 		RedBlackTree \
-		BTree
+		BTree \
+		BPlusTree
 
 #二叉查找树
 BinarySearchTree.o : BinarySearchTree.c
@@ -33,6 +34,10 @@ RedBlackTree.o : RedBlackTree.c
 BTree.o : BTree.c
 	$(CC) $(COMMON_FLAGS) -c BTree.c
 
+#B+树
+BPlusTree.o : BPlusTree.c
+	$(CC) $(COMMON_FLAGS) -c BPlusTree.c
+
 # .PHONY是为了指定后面的元素，例如这里的clean并不是一个真正的文件，只是一个假想工作目标
 .PHONY : clean
 
@@ -41,5 +46,6 @@ clean :
 			BinarySearchTree \
 			BalancedBinaryTree \
 			RedBlackTree \
-			BTree
+			BTree \
+			BPlusTree
 
