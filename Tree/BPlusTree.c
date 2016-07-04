@@ -15,6 +15,8 @@
  * 	感觉最欠缺的还是调试方式和调试工具，靠printf打断点来调试真的效率低下
  *  三个星期的时间，磕磕绊绊的才写出B+树，而且还只有添加，节点删除还没写，另外这个B+树也不稳固
  *  那些写B+树觉得难的，应该心里会有些安慰吧，比我笨的应该很少了...
+ *
+ * 	
  * 
  *	@Description: 	Description
  *	@Datetime: 		2016-07-04 10:37:00
@@ -45,6 +47,7 @@ void bptree_init();
 void bptree_print(bpnode * root);
 void bptree_insert(bpnode * root, int key);
 void bptree_split(bpnode * node);
+bpnode * find_insert_place(bpnode * node, int key);
 
 /**
  * 创建一个新的节点
@@ -110,7 +113,12 @@ void bptree_print(bpnode * root)
 	}
 }
 
-
+/**
+ * 其实节点的插入有两种
+ * 一种是判断到满节点则先分裂再插入
+ * 另外一种是判断到满节点，但是先不分裂，而是继续判断这个满节点的子节点中有没有插入的位置，并且这个插入的位置是否已满
+ * 如果未满，那么我们完全可以不分裂第一个搜索到的满节点，而是直接插入这个位置，这样子可以避免过多的分裂（而过多的分裂会导致树的高度增加）
+ */
 void bptree_insert(bpnode * root, int key)
 {
 	//如果插入节点为空
@@ -173,10 +181,59 @@ void bptree_insert(bpnode * root, int key)
 		//如果节点已满
 		else
 		{
-			bptree_split(root);
-			bptree_insert(bptree_root, key);
+			/**
+			 * 这里做一下优化，如果节点已满，如果不是叶节点的话，我们再判断一下其子节点的情况，如果子节点没满，也可以先不分裂此节点，先插入子节点
+			 * 这样做的好处就是，有效减少树的高度
+			 */
+
+			//如果是叶子节点则不用想了，分裂就好了
+			if(root -> isleaf)
+			{
+				bptree_split(root);
+				bptree_insert(bptree_root, key);	//上面一行代码分裂了叶子节点，但是可能导致向父节点的连锁分裂，所以你不知道分裂到哪一个环节，所以还是从根节点插入关键字
+			}
+			//如果不是叶子节点的话，我们先看一下他应该插入的位置可不可以插入（也就是有没有满）
+			else
+			{
+				//找到应该插入的位置
+				bpnode * finder = find_insert_place(root, key);
+
+				//如果找到应该插入的位置还没有满，则可以插入这里
+				if(finder -> keynum < BPLUSTREE_M)
+				{
+					bptree_insert(finder, key);
+				}
+				//如果这个位置已经满了，则直接分裂当前节点然后再插入
+				else
+				{
+					bptree_split(root);
+					bptree_insert(bptree_root, key);	//上面一行代码分裂了叶子节点，但是可能导致向父节点的连锁分裂，所以你不知道分裂到哪一个环节，所以还是从根节点插入关键字
+				}
+			}
 		}
 	}
+}
+
+/**
+ * 找到适合插入的位置节点
+ */
+bpnode * find_insert_place(bpnode * node, int key)
+{
+	if( node -> isleaf )
+	{
+		return node;
+	}
+
+	int i;
+	for (i = 0; i < node -> keynum; ++i)
+	{
+		if( key < node -> keys[i] )
+		{
+			return find_insert_place( node -> children[i], key );
+		}
+	}
+
+	return find_insert_place( node -> children[i], key );
 }
 
 /**
