@@ -70,7 +70,7 @@ BTree -> B+Tree -> B*Tree 的整个演化就是减少节点空间的分配，减
 
 * B+树 - 是一种读写代价更低，查询效率更稳定（因为非终端节点都是关键字的索引，所以每个关键字的查询长度相同）的B树的变形，适应于文件系统
 
-* B*树
+* B*树 - 是B+树的变体，最主要区别在于节点中关键字使用率为(2/3)*M（M为树的阶）
 
 * R树 - Rectangle Tree - A dynamic index structure for spatial searching
 

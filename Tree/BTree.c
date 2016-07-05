@@ -102,11 +102,7 @@
 // 可以看出B树是一个非常有效率的数据结构
 // 因为通常现实情况下出度T非常大，例如100甚至1000，那么得到的对数则会非常小，通常<=3
 // 当然查找到相应节点之后还要在节点关键字上进行二分查找等消耗
-#define T BTREE_M/2 	
-
-#define true 1
-#define false 0
-#define null NULL
+#define T BTREE_M/2
 
 typedef struct btree_node{
 	int keynum;		//顾名思义，保存的数据的数量，也就是key的数量

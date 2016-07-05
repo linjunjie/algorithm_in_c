@@ -5,7 +5,9 @@
 #include <stdlib.h>		/* for malloc */
 #include <string.h>		/* for memcpy */
 #include <assert.h>		/* for assert */
-#include <math.h>	/* for B-tree */
+#include <math.h>		/* for B-tree */
+
+#include "type.h"	/* 自定义的一些类型 */
 
 // 计算数组长度的宏
 #define GET_ARRAY_LEN(array,len){len = (sizeof(array) / sizeof(array[0]));}
