@@ -1,8 +1,16 @@
 /**
  *	hashtable,哈希表也称为散列表
- *
+ * 
  *	这里使用拉链法来展示一个简单的哈希表
  *	所谓拉链法，也就是使用链表来处理哈希冲突
+ *
+ *  在目前php中（ php5 ）的哈希方法是：DJBX33A，其名称来源于此算法作者和方法：
+ * 	DJBX33A (Daniel J. Bernstein, Times 33 with Addition)
+ * 	文件位于/php-src/Zend/zend_hash.h中，其中也有详细的介绍
+ * 	php中对它的介绍是这样的：
+ * 	This is one of the best known hash functions for strings. 
+ * 	Because it is both computed very fast and distributes very well.
+ * 	
  */
 
 #include "algorithm.h"
